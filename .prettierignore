@@ -1,0 +1,7 @@
+# Ignore artifacts:
+build
+coverage
+.idea/
+docker/
+mongo-init.js
+src/app/routes/auto-router.ts

@@ -1,0 +1,58 @@
+{
+  "name": "prueba",
+  "scripts": {
+    "generate:routes": "bun src/app/GenerateRoutes.js",
+    "dev": "bun run generate:routes && bun --watch src/app/Start.ts",
+    "lint": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"tests/**/*.{ts,tsx,js}\"",
+    "lint:fix": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"tests/**/*.{ts,tsx,js}\" --fix",
+    "format": "bun x prettier -w src tests",
+    "format:check": "bun x prettier --check src tests",
+    "typecheck": "tsc --noEmit",
+    "test": "bun x vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "clean": "bun x rimraf dist",
+    "prebuild": "bun run clean && bun run generate:routes && bun run lint && bun run test",
+    "build": "tsc -p tsconfig.json",
+    "start:node": "node --enable-source-maps dist/src/app/Start.js",
+    "start:bun": "bun dist/Start.js",
+    "docker:build": "docker-compose build",
+    "docker:restart": "docker-compose restart",
+    "docker:dev": "docker compose up",
+    "docker:clean": "docker-compose down -v",
+    "docker:rebuild": "docker-compose down && docker-compose build --no-cache && docker-compose up -d"
+  },
+  "dependencies": {
+    "@types/express-session": "^1.18.2",
+    "axios": "^1.12.2",
+    "compression": "^1.8.1",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-session": "^1.18.2",
+    "fast-glob": "^3.3.3",
+    "helmet": "^8.1.0",
+    "jose": "^6.1.0",
+    "mongoose": "^8.19.0",
+    "morgan": "^1.10.1",
+    "sharp": "^0.34.4",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@types/bun": "latest",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/morgan": "^1.9.10",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.45.0",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
