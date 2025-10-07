@@ -16,3 +16,4 @@ yarn-error.log*
 /src/app/routes/auto-router.ts
 
 .DS_Store
+/dist/

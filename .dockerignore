@@ -4,9 +4,13 @@ npm-debug.log
 .gitignore
 .env
 .DS_Store
-coverage
 .vscode
 .idea
 *.md
+docker
 docker-compose*.yml
 Dockerfile
+dist
+.env.*
+!/.prettierignore
+/.prettierrc

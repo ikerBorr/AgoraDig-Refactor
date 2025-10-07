@@ -1,4 +1,3 @@
-# Imagen e con Node 20 (Alpine)
 FROM node:20-alpine
 
 RUN apk add --no-cache curl bash
