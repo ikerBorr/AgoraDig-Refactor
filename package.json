@@ -3,10 +3,10 @@
   "scripts": {
     "generate:routes": "bun src/app/route-generator.js",
     "dev": "bun run generate:routes && bun --watch src/app/start.ts",
-    "lint": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"tests/**/*.{ts,tsx,js}\"",
-    "lint:fix": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"tests/**/*.{ts,tsx,js}\" --fix",
-    "format": "bun x prettier -w src tests",
-    "format:check": "bun x prettier --check src tests",
+    "lint": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"test/**/*.{ts,tsx,js}\"",
+    "lint:fix": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"test/**/*.{ts,tsx,js}\" --fix",
+    "format": "bun x prettier -w src test",
+    "format:check": "bun x prettier --check src test",
     "typecheck": "tsc --noEmit",
     "test": "bun x vitest run",
     "test:watch": "vitest --watch",
@@ -34,9 +34,11 @@
     "express-session": "^1.18.2",
     "fast-glob": "^3.3.3",
     "helmet": "^8.1.0",
+    "inversify": "^7.10.2",
     "jose": "^6.1.0",
     "mongoose": "^8.19.0",
     "morgan": "^1.10.1",
+    "reflect-metadata": "^0.2.2",
     "sharp": "^0.34.4",
     "zod": "^4.1.11"
   },
@@ -51,6 +53,7 @@
     "globals": "^16.4.0",
     "prettier": "^3.6.2",
     "typescript-eslint": "^8.45.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {

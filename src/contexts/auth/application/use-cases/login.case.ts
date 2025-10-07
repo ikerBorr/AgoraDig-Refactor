@@ -1,12 +1,17 @@
-import type {AuthUserRepository} from "@/contexts/auth/domain/ports/auth-user.repository";
-import type {ResponseAuthUserDto} from "@/contexts/auth/application/dto/response-auth-user.dto";
-import {Identifier} from "@/contexts/auth/domain/value-objects/identifier";
-import type {AuthUser} from "@/contexts/auth/domain/entities/auth-user";
-import {LoginErrors} from "@/contexts/auth/application/exceptions/login.exceptions"
-import {PasswordMismatchError} from "@/contexts/auth/domain/exceptions/password.exceptions";
+import type { AuthUserRepository } from '@/contexts/auth/domain/ports/auth-user.repository'
+import type { ResponseAuthUserDto } from '@/contexts/auth/application/dto/response-auth-user.dto'
+import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
+import type { AuthUser } from '@/contexts/auth/domain/entities/auth-user'
+import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exceptions'
+import { PasswordMismatchError } from '@/contexts/auth/domain/exceptions/password.exceptions'
+import { inject } from 'inversify'
+import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
 
 export class LoginCase {
-    constructor(private readonly userRepository: AuthUserRepository) {}
+    constructor(
+        @inject(AUTH_CONTAINER.AuthUserRepository)
+        private readonly userRepository: AuthUserRepository,
+    ) {}
 
     async login(identifierRaw: string, password: string): Promise<ResponseAuthUserDto> {
         const identifier = Identifier.from(identifierRaw)

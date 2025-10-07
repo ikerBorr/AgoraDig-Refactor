@@ -1,7 +1,7 @@
-import type { AuthUser } from '../../../../../src/contexts/auth/domain/entities/auth-user'
-import { Uuid } from '../../../../../src/contexts/shared/domain/value-objects/uuid'
-import { Identifier } from '../../../../../src/contexts/auth/domain/value-objects/identifier'
-import { Password } from '../../../../../src/contexts/auth/domain/value-objects/password'
+import type { AuthUser } from '@/contexts/auth/domain/entities/auth-user'
+import { Uuid } from '@/contexts/shared/domain/value-objects/uuid'
+import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
+import { Password } from '@/contexts/auth/domain/value-objects/password'
 
 export class AuthUserMother {
     static withIdentifier(

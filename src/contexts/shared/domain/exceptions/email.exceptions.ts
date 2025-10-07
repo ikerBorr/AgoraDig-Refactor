@@ -1,4 +1,4 @@
-import {DomainException} from "@/contexts/shared/domain/exceptions/domain.exception";
+import { DomainException } from '@/contexts/shared/domain/exceptions/domain.exception'
 
 export class EmailLengthOutOfRangeError extends DomainException {
     readonly name = 'EMAIL_LENGTH_OUT_OF_RANGE'

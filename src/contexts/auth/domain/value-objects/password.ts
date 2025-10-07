@@ -1,6 +1,6 @@
-import {ValueObject} from "@/contexts/shared/domain/value-objects/value-object";
-import { randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto';
-import {PasswordErrors} from "@/contexts/auth/domain/exceptions/password.exceptions"
+import { ValueObject } from '@/contexts/shared/domain/value-objects/value-object'
+import { randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto'
+import { PasswordErrors } from '@/contexts/auth/domain/exceptions/password.exceptions'
 
 export class Password extends ValueObject<string> {
     private static readonly ITERATIONS = 310000

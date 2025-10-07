@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { Identifier } from '../../../../../src/contexts/auth/domain/value-objects/identifier'
+import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
 
 export class IdentifierMother {
     static randomEmail(): Identifier {

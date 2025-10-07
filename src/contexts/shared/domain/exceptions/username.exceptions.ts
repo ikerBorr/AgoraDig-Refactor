@@ -1,4 +1,4 @@
-import {DomainException} from "@/contexts/shared/domain/exceptions/domain.exception";
+import { DomainException } from '@/contexts/shared/domain/exceptions/domain.exception'
 
 export class UsernameLengthOutOfRangeError extends DomainException {
     readonly name = 'USERNAME_LENGTH_OUT_OF_RANGE'

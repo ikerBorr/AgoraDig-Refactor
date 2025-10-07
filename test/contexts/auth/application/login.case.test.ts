@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach, type Mocked } from 'vitest'
-import type { AuthUserRepository } from '../../../../src/contexts/auth/domain/ports/auth-user.repository'
-import { LoginCase } from '../../../../src/contexts/auth/application/cases/login.case'
-import { LoginErrors } from '../../../../src/contexts/auth/application/exceptions/login.exceptions'
-import { PasswordMismatchError } from '../../../../src/contexts/auth/domain/exceptions/password.exceptions'
-import { IdentifierMother } from '../domain/mothers/identifier.mother'
-import { PasswordMother } from '../domain/mothers/password.mother'
-import { AuthUserMother } from '../domain/mothers/auth-user.mother'
+import { beforeEach, describe, expect, it, type Mocked, vi } from 'vitest'
+import type { AuthUserRepository } from '@/contexts/auth/domain/ports/auth-user.repository'
+import { LoginCase } from '@/contexts/auth/application/use-cases/login.case'
+import { IdentifierMother } from '@test/contexts/auth/domain/mothers/identifier.mother'
+import { PasswordMother } from '@test/contexts/auth/domain/mothers/password.mother'
+import { AuthUserMother } from '@test/contexts/auth/domain/mothers/auth-user.mother'
+import { PasswordMismatchError } from '@/contexts/auth/domain/exceptions/password.exceptions'
+import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exceptions'
 
 describe('LoginCase', () => {
     let repository: Mocked<AuthUserRepository>

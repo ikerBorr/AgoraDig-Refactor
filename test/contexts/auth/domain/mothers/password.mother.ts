@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { Password } from '../../../../../src/contexts/auth/domain/value-objects/password'
+import { Password } from '@/contexts/auth/domain/value-objects/password'
 
 export class PasswordMother {
     static strongPlain(): string {
