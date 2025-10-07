@@ -25,6 +25,6 @@ export class Identifier extends ValueObject<string> {
     }
 
     get isUsername(): boolean {
-        return this._isEmail
+        return !this._isEmail
     }
 }
