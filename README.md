@@ -177,7 +177,7 @@ Full environment rebuild:
 
 ### API Documentation
 - **Markdown:** `/docs/endpoints.md` — Developer-friendly reference
-- **OpenAPI:** `/docs/openapi.yaml` — Swagger-compatible specification
+- **OpenAPI:** [**http://localhost:3000/api/docs**](http://localhost:3000/api/docs)— Swagger-compatible specification
 
 ### Configuration
 - **Environment:** `.env.example` — All required environment variables documented

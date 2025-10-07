@@ -5,3 +5,4 @@ coverage
 docker/
 mongo-init.js
 src/app/routes/auto-router.ts
+/docs/
