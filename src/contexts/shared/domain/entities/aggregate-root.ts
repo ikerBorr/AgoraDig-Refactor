@@ -1,4 +1,4 @@
-import type { DomainEvent } from './domain-event'
+import {DomainEvent} from "@/contexts/shared/domain/entities/domain-event";
 
 export abstract class AggregateRoot {
     private domainEvents: Array<DomainEvent<unknown>>

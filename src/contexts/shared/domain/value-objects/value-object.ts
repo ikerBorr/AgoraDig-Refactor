@@ -1,4 +1,4 @@
-import { InvalidArgumentError } from '../exceptions/invalid-argument.exception'
+import { InvalidArgumentError } from "@/contexts/shared/domain/exceptions/invalid-argument.exception";
 
 export type Primitives = string | number | boolean | Date
 

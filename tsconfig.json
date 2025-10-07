@@ -3,6 +3,11 @@
     "lib": ["ESNext"],
     "target": "ESNext",
     "module": "commonjs",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"]
+    },
     "allowJs": true,
     "moduleResolution": "node",
     "noEmit": false,

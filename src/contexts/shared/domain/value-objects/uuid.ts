@@ -1,5 +1,5 @@
-import { ValueObject } from './value-object'
-import { UuidErrors } from '../exceptions/uuid.exceptions'
+import {ValueObject} from "@/contexts/shared/domain/value-objects/value-object";
+import { UuidErrors } from "@/contexts/shared/domain//exceptions/uuid.exceptions";
 
 export class Uuid extends ValueObject<string> {
     constructor(value?: string) {

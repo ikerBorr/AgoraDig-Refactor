@@ -1,5 +1,5 @@
-import { ValueObject } from './value-object'
-import { EmailErrors } from '../exceptions/email.exceptions'
+import {ValueObject} from "@/contexts/shared/domain/value-objects/value-object";
+import {EmailErrors} from "@/contexts/shared/domain/exceptions/email.exceptions"
 
 const EMAIL_MAX_LENGTH = 254
 const LOCAL_MAX_LENGTH = 64

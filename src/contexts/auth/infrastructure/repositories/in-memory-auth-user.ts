@@ -1,9 +1,9 @@
-import type { AuthUserRepository } from '../../domain/ports/auth-user.repository'
-import { AuthUser } from '../../domain/entities/auth-user'
-import type { Identifier } from '../../domain/value-objects/identifier'
-import type { Nullable } from '../../../shared/application/types/nullable'
-import { Uuid } from '../../../shared/domain/value-objects/uuid'
-import { Password } from '../../domain/value-objects/password'
+import type {AuthUserRepository} from "@/contexts/auth/domain/ports/auth-user.repository";
+import {AuthUser} from "@/contexts/auth/domain/entities/auth-user";
+import {Uuid} from "@/contexts/shared/domain/value-objects/uuid";
+import {Password} from "@/contexts/auth/domain/value-objects/password";
+import type {Identifier} from "@/contexts/auth/domain/value-objects/identifier";
+import type {Nullable} from "@/contexts/shared/application/types/nullable";
 
 export class InvalidCredentials implements AuthUserRepository {
     private readonly users: AuthUser[] = [

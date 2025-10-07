@@ -1,9 +1,9 @@
-import type { AuthUserRepository } from '../../domain/ports/auth-user.repository'
-import { Identifier } from '../../domain/value-objects/identifier'
-import type { ResponseAuthUserDto } from '../dto/response-auth-user.dto'
-import { LoginErrors } from '../exceptions/login.exceptions'
-import { PasswordMismatchError } from '../../domain/exceptions/password.exceptions'
-import type { AuthUser } from '../../domain/entities/auth-user'
+import type {AuthUserRepository} from "@/contexts/auth/domain/ports/auth-user.repository";
+import type {ResponseAuthUserDto} from "@/contexts/auth/application/dto/response-auth-user.dto";
+import {Identifier} from "@/contexts/auth/domain/value-objects/identifier";
+import type {AuthUser} from "@/contexts/auth/domain/entities/auth-user";
+import {LoginErrors} from "@/contexts/auth/application/exceptions/login.exceptions"
+import {PasswordMismatchError} from "@/contexts/auth/domain/exceptions/password.exceptions";
 
 export class LoginCase {
     constructor(private readonly userRepository: AuthUserRepository) {}

@@ -1,7 +1,7 @@
-import { AggregateRoot } from '../../../shared/domain/entities/aggregate-root'
-import { Password } from '../value-objects/password'
-import { Uuid } from '../../../shared/domain/value-objects/uuid'
-import { Identifier } from '../value-objects/identifier'
+import {AggregateRoot} from "@/contexts/shared/domain/entities/aggregate-root";
+import {Uuid} from "@/contexts/shared/domain/value-objects/uuid";
+import {Identifier} from "@/contexts/auth/domain/value-objects/identifier";
+import {Password} from "@/contexts/auth/domain/value-objects/password";
 
 export interface AuthUserPrimitives {
     uuid: string

@@ -1,5 +1,5 @@
 import type express from 'express'
-import { loginSchema } from './login.schema'
+import {loginSchema} from "@/app/routes/auth/login/login.schema";
 
 export function POST(req: express.Request, res: express.Response) {
     const result = loginSchema.safeParse(req.body)

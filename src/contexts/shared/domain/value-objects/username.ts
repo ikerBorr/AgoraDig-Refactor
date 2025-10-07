@@ -1,5 +1,5 @@
-import { ValueObject } from './value-object'
-import { UsernameErrors } from '../exceptions/username.exceptions'
+import {ValueObject} from "@/contexts/shared/domain/value-objects/value-object";
+import { UsernameErrors } from "@/contexts/shared/domain/exceptions/username.exceptions";
 
 const USERNAME_MIN_LENGTH = 3
 const USERNAME_MAX_LENGTH = 20
