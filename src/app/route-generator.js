@@ -2,7 +2,7 @@ import fg from 'fast-glob'
 import { promises as fs } from 'fs'
 import path from 'path'
 
-class GenerateRoutes {
+class RouteGenerator {
     HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
     _baseDir = ''
@@ -114,7 +114,7 @@ class GenerateRoutes {
 }
 
 async function main() {
-    const generator = new GenerateRoutes('./src/app/routes', './src/app/routes/auto-router.ts')
+    const generator = new RouteGenerator('./src/app/routes', './src/app/routes/auto-router.ts')
 
     try {
         console.log('\n=== 🛠  Generating routes... ===\n')

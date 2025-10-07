@@ -1,8 +1,8 @@
 {
   "name": "prueba",
   "scripts": {
-    "generate:routes": "bun src/app/GenerateRoutes.js",
-    "dev": "bun run generate:routes && bun --watch src/app/Start.ts",
+    "generate:routes": "bun src/app/route-generator.js",
+    "dev": "bun run generate:routes && bun --watch src/app/start.ts",
     "lint": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"tests/**/*.{ts,tsx,js}\"",
     "lint:fix": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"tests/**/*.{ts,tsx,js}\" --fix",
     "format": "bun x prettier -w src tests",
@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
+    "@faker-js/faker": "^10.0.0",
     "@types/bun": "latest",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",

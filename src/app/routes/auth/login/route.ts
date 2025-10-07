@@ -1,13 +1,19 @@
 import type express from 'express'
+import { loginSchema } from './login.schema'
 
-export function POST(/*req: express.Request,*/ res: express.Response) {
+export function POST(req: express.Request, res: express.Response) {
+    const result = loginSchema.safeParse(req.body)
+    if (!result.success) {
+        return res.status(400).send(result.error.issues)
+    }
+
     try {
-        const user = 'hola'
-        if (!user) {
-            return res.status(404).json({ error: 'Usuario no encontrado' })
-        }
-        res.json(user)
+        const { identifier, password } = result.data
+
+        console.log(`Username: ${identifier}; Password: ${password}`)
+
+        return res.json('ok')
     } catch (error) {
-        res.status(500).json({ error: (error as Error).message })
+        return res.status(500).json({ error: (error as Error).message })
     }
 }

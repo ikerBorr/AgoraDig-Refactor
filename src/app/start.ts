@@ -1,9 +1,8 @@
 import 'dotenv/config'
 import { Router } from 'express'
-import { ExpressApp } from './ExpressApp'
+import { ExpressApp } from './express.app'
 // @ts-ignore auto-generated
-import { router as  routers} from './routes/auto-router'
-
+import { router as routers } from './routes/auto-router'
 
 function generateRoutes() {
     const router = Router()
