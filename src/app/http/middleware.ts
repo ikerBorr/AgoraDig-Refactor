@@ -16,7 +16,7 @@ export async function middleware(
     const user = await getUser(req.signedCookies)
     exportUser(res, user)
 
-    if (req.path === "/") {
+    if (req.path === "/" && process.env.NODE_ENV === "development") {
         return res.redirect("/api/docs")
     }
 
