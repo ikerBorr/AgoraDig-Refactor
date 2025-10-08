@@ -75,7 +75,7 @@ paths:
         - **Secure Password Hashing** — Bcrypt with cost factor 10
         - **Enumeration Prevention** — Generic error messages
         - **Rate Limiting** — 5 attempts per 15 minutes (planned)
-        - **Audit Logging** — All login attempts logged
+        - **Audit Logging** — All login attempts logged (planned)
         
         ## Rate Limiting
         
@@ -84,6 +84,7 @@ paths:
         - **Limit:** 5 requests per 15 minutes per IP
         - **Headers:** `X-RateLimit-*` returned in response
         - **429 Response:** Returned when limit exceeded
+        
 
       operationId: authenticateUser
 
@@ -467,8 +468,6 @@ components:
       required:
         - code
         - message
-        - data
-        - timestamp
       properties:
         code:
           type: string
@@ -482,63 +481,15 @@ components:
           description: Human-readable success message
           example: Login successful
 
-        data:
-          type: object
-          required:
-            - uuid
-            - identifier
-          properties:
-            uuid:
-              type: string
-              format: uuid
-              pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
-              description: |
-                Unique identifier for the authenticated user (UUID v4 format).
-                
-                **Usage:**
-                - Store securely on the client
-                - Include in subsequent authenticated requests
-                - Use for user-specific operations
-                
-                **Format:** RFC 4122 compliant UUID v4
-              example: 2b7e2b65-9c9f-4f22-8f7d-8f6f7e5b6f11
-
-            identifier:
-              type: string
-              description: |
-                Echoes back the identifier used for authentication.
-                
-                This can be either:
-                - The email address provided in the request
-                - The username provided in the request
-                
-                **Usage:**
-                - Display in UI for confirmation
-                - Store for display purposes
-                - Reference in audit logs
-              example: john.doe@example.com
-
-        timestamp:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp of when the authentication occurred
-          example: '2025-10-08T14:30:00Z'
-
       example:
         code: SUCCESS
         message: Login successful
-        data:
-          uuid: 2b7e2b65-9c9f-4f22-8f7d-8f6f7e5b6f11
-          identifier: john.doe@example.com
-        timestamp: '2025-10-08T14:30:00Z'
 
     ErrorResponse:
       type: object
       required:
         - code
         - message
-        - timestamp
-        - path
       properties:
         code:
           oneOf:
@@ -571,76 +522,20 @@ components:
             
             **Important:** Do not parse error messages for logic. Always use error codes.
           example: INVALID_CREDENTIALS
-
         message:
           type: string
           description: |
             Human-readable error message providing details about what went wrong.
-            
-            ### Guidelines
-            
-            - ✅ User-facing and localization-friendly
-            - ✅ Provides actionable feedback when possible
-            - ❌ Does not expose sensitive system information
-            - ❌ Does not reveal security details
-            
-            ### Localization
-            
-            Error messages can be localized by setting the `Accept-Language` header.
           example: Invalid credentials
-
-        timestamp:
-          type: string
-          format: date-time
-          description: |
-            ISO 8601 timestamp of when the error occurred.
-            
-            Useful for:
-            - Correlating errors with server logs
-            - Time-based error analysis
-            - Support ticket investigation
-          example: '2025-10-08T14:30:00Z'
-
-        path:
-          type: string
-          description: |
-            API endpoint path where the error occurred.
-            
-            Helps identify which endpoint generated the error.
-          example: /auth/login
-
-        requestId:
-          type: string
-          format: uuid
-          description: |
-            Unique request identifier for tracing and debugging.
-            
-            **Usage:**
-            - Include in support tickets
-            - Used for log correlation
-            - Helps track request through system
-          example: 7f8e9d6c-5b4a-3c2d-1e0f-9a8b7c6d5e4f
-
-        retryAfter:
-          type: integer
-          description: |
-            Number of seconds to wait before retrying (for rate limiting and temporary failures).
-          example: 900
-
       example:
         code: INVALID_CREDENTIALS
         message: Invalid credentials
-        timestamp: '2025-10-08T14:30:00Z'
-        path: /auth/login
-        requestId: 7f8e9d6c-5b4a-3c2d-1e0f-9a8b7c6d5e4f
 
     ValidationErrorResponse:
       type: object
       required:
         - code
         - message
-        - timestamp
-        - path
       properties:
         code:
           type: string
@@ -650,128 +545,14 @@ components:
           example: VALIDATION_ERROR
 
         message:
-          type: array
+          type: string
           description: |
-            Array of Zod validation issues. Each issue represents a specific validation failure in the request body.
-            
-            ### Issue Structure
-            
-            Each validation issue contains:
-            - **code**: Zod-specific error type (e.g., `invalid_type`, `too_small`)
-            - **path**: JSON path to the failed field
-            - **message**: Human-readable description
-            - **expected**: Expected data type or constraint
-            - **received**: Actual data received
-            
             This detailed information helps clients understand exactly what needs to be corrected.
-          items:
-            type: object
-            required:
-              - code
-              - path
-              - message
-            properties:
-              code:
-                type: string
-                description: |
-                  Zod-specific validation error code.
-                  
-                  **Common Codes:**
-                  - `invalid_type` — Wrong data type
-                  - `too_small` — Value below minimum
-                  - `too_big` — Value exceeds maximum
-                  - `invalid_string` — String format violation
-                example: invalid_type
-
-              path:
-                type: array
-                items:
-                  type: string
-                description: |
-                  JSON path array to the field that failed validation.
-                  
-                  **Examples:**
-                  - `["identifier"]` — Top-level identifier field
-                  - `["user", "email"]` — Nested email field
-                example: ['identifier']
-
-              message:
-                type: string
-                description: Human-readable description of the validation error
-                example: Expected string, received number
-
-              expected:
-                type: string
-                description: Expected data type or format
-                example: string
-
-              received:
-                type: string
-                description: Actual data type or format that was received
-                example: number
-
-              minimum:
-                type: integer
-                description: Minimum value for numeric constraints
-                example: 1
-
-              maximum:
-                type: integer
-                description: Maximum value for numeric constraints
-                example: 255
-
-            additionalProperties: true
-          minItems: 1
-
-        timestamp:
-          type: string
-          format: date-time
-          description: ISO 8601 timestamp of when the validation error occurred
-          example: '2025-10-08T14:30:00Z'
-
-        path:
-          type: string
-          description: API endpoint path where the validation error occurred
-          example: /auth/login
+          example: The password is invalid input.
 
       example:
         code: VALIDATION_ERROR
-        message:
-          - code: invalid_type
-            path: ['identifier']
-            message: Required
-            expected: string
-            received: undefined
-        timestamp: '2025-10-08T14:30:00Z'
-        path: /auth/login
-
-  securitySchemes:
-    SessionAuth:
-      type: apiKey
-      in: cookie
-      name: sessionId
-      description: |
-        Session-based authentication using HTTP-only cookies.
-        
-        ### Usage
-        
-        After successful login, a session cookie is automatically set by the server. Include this cookie in subsequent requests by setting `credentials: 'include'` in fetch requests.
-        
-        ### Cookie Properties
-        
-        - **HttpOnly**: Cannot be accessed by JavaScript (XSS protection)
-        - **Secure**: Only sent over HTTPS in production
-        - **SameSite**: Strict mode to prevent CSRF attacks
-        - **Max-Age**: 24 hours (86400 seconds)
-        
-        ### Example
-        
-        ```javascript
-        fetch('/api/v1/protected-endpoint', {
-          credentials: 'include'
-        });
-        ```
-
+        message: The password is invalid input.
 
   responses:
     UnauthorizedError:
@@ -779,12 +560,7 @@ components:
         **Authentication Required**
         
         The request requires authentication but none was provided, or the provided authentication is invalid.
-      headers:
-        WWW-Authenticate:
-          description: Authentication method required
-          schema:
-            type: string
-            example: Bearer realm="AgoraDig API"
+
       content:
         application/json:
           schema:
@@ -795,24 +571,18 @@ components:
               value:
                 code: UNAUTHORIZED
                 message: Authentication required
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/protected-endpoint
 
             invalidToken:
               summary: Invalid Token
               value:
                 code: INVALID_TOKEN
                 message: The provided authentication token is invalid
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/protected-endpoint
 
             expiredToken:
               summary: Expired Token
               value:
                 code: TOKEN_EXPIRED
                 message: Authentication token has expired
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/protected-endpoint
 
     ForbiddenError:
       description: |
@@ -829,16 +599,12 @@ components:
               value:
                 code: FORBIDDEN
                 message: You do not have permission to access this resource
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/admin/users
 
             resourceOwnership:
               summary: Resource Ownership Required
               value:
                 code: NOT_RESOURCE_OWNER
                 message: You can only modify your own resources
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/users/123/profile
 
     NotFoundError:
       description: |
@@ -855,16 +621,12 @@ components:
               value:
                 code: NOT_FOUND
                 message: The requested resource was not found
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/users/non-existent-id
 
             endpointNotFound:
               summary: Endpoint Not Found
               value:
                 code: ENDPOINT_NOT_FOUND
                 message: The requested endpoint does not exist
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/invalid-endpoint
 
     RateLimitError:
       description: |
@@ -904,8 +666,6 @@ components:
               value:
                 code: RESOURCE_ALREADY_EXISTS
                 message: A resource with this identifier already exists
-                timestamp: '2025-10-08T14:30:00Z'
-                path: /api/v1/users
 
     ValidationError:
       description: |
@@ -924,15 +684,9 @@ components:
       value:
         code: SUCCESS
         message: Login successful
-        data:
-          uuid: 2b7e2b65-9c9f-4f22-8f7d-8f6f7e5b6f11
-          identifier: john.doe@example.com
-        timestamp: '2025-10-08T14:30:00Z'
 
     InvalidCredentials:
       summary: Invalid Credentials Error
       value:
         code: INVALID_CREDENTIALS
         message: Invalid credentials
-        timestamp: '2025-10-08T14:30:00Z'
-        path: /auth/login
