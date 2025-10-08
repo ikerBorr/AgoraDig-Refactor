@@ -1,18 +1,19 @@
 import type express from 'express'
-import { loginSchema } from '@/app/routes/auth/login/login.schema'
+import { loginSchema } from '@/app/http/routes/auth/login/login.schema'
 import { AuthContainer } from '@/contexts/auth/infrastructure/di/inversify.container'
 import type { LoginCase } from '@/contexts/auth/application/use-cases/login.case'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
-import { createSessionCookie, formatZodError } from '@/app/routes/utils'
-import type { Exception } from '@/app/routes/http-exception-mapper'
-import { loginErrorMapper } from '@/app/routes/auth/login/login.error-mapper'
+import type { Exception } from '@/app/http/serialization/http-exception-mapper'
+import { loginErrorMapper } from '@/app/http/routes/auth/login/login.error-mapper'
+import {zodErrorFormatter} from "@/app/http/serialization/zod-error-formatter";
+import {createSessionCookie} from "@/app/http/serialization/express-cookies";
 
 export async function POST(req: express.Request, res: express.Response) {
     const parsed = loginSchema.safeParse(req.body)
     if (!parsed.success) {
         return res
             .status(400)
-            .json({ code: 'VALIDATION_ERROR', message: formatZodError(parsed.error) })
+            .json({ code: 'VALIDATION_ERROR', message: zodErrorFormatter(parsed.error) })
     }
 
     try {

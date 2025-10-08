@@ -1,8 +1,8 @@
 {
   "name": "prueba",
   "scripts": {
-    "generate:routes": "bun src/app/route-generator.js",
-    "dev": "bun run generate:routes && bun --watch src/app/start.ts",
+    "generate:routes": "bun src/app/http/scripts/route-generator.js",
+    "dev": "bun run generate:routes && bun --watch src/app/http/main.ts",
     "lint": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"test/**/*.{ts,tsx,js}\"",
     "lint:fix": "bun x eslint \"src/**/*.{ts,tsx,js}\" \"test/**/*.{ts,tsx,js}\" --fix",
     "format": "bun x prettier -w src test",

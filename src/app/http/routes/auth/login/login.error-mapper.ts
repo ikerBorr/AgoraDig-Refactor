@@ -2,7 +2,7 @@ import type {
     Exception,
     HttpExceptionResponse,
     HttpResponse,
-} from '@/app/routes/http-exception-mapper'
+} from '@/app/http/serialization/http-exception-mapper'
 import { DomainException } from '@/contexts/shared/domain/exceptions/domain.exception'
 import { ApplicationException } from '@/contexts/shared/application/exceptions/application.exception'
 import { InvalidCredentialsError } from '@/contexts/auth/application/exceptions/login.exceptions'

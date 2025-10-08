@@ -1,9 +1,9 @@
 import 'dotenv/config'
 import { Router } from 'express'
-import { ExpressApp } from '@/app/express.app'
+import { ExpressServer } from '@/app/http/express.server'
 // @ts-ignore auto-generated
-import { router as routers } from '@/app/routes/auto-router'
-import { middleware } from '@/app/routes/middleware'
+import { router as routers } from '@/app/http/routes/auto-router'
+import { middleware } from '@/app/http/middleware'
 
 function generateRoutes() {
     const router = Router()
@@ -19,7 +19,7 @@ function generateRoutes() {
 function main() {
     const routes: Router = generateRoutes()
 
-    const app = new ExpressApp({
+    const app = new ExpressServer({
         port: Number(process.env.PORT) || 3000,
         environment: process.env.NODE_ENV as 'development' | 'production' | 'test',
         mongoUri: process.env.MONGO_URI,

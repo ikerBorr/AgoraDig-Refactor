@@ -37,7 +37,7 @@ export interface ErrorResponse {
     [key: string]: unknown
 }
 
-export class ExpressApp {
+export class ExpressServer {
     private readonly app: Express
     private readonly config: Required<ExpressAppConfig>
     private server: http.Server | undefined

@@ -47,7 +47,9 @@ async function getUser(
 
     try {
         const jwt = AuthContainer.get<JwtGenerator>(AUTH_CONTAINER.JwtGenerator)
-        return await jwt.decode<DecodedSessionCookieDto>(session)
+        const {uuid, identifier, banned} = await jwt.decode<DecodedSessionCookieDto>(session)
+
+        return {uuid, banned, identifier}
     } catch {
         return null
     }

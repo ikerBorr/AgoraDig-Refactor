@@ -114,7 +114,7 @@ class RouteGenerator {
 }
 
 async function main() {
-    const generator = new RouteGenerator('./src/app/routes', './src/app/routes/auto-router.ts')
+    const generator = new RouteGenerator('./src/app/http/routes', './src/app/http/routes/auto-router.ts')
 
     try {
         console.log('\n=== 🛠  Generating routes... ===\n')

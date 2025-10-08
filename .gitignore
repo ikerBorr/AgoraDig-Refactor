@@ -13,7 +13,7 @@ yarn-error.log*
 .env
 
 /.idea/
-/src/app/routes/auto-router.ts
+/src/app/http/routes/auto-router.ts
 
 .DS_Store
 /dist/
