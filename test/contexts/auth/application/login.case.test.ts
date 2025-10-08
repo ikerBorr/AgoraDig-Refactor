@@ -21,8 +21,9 @@ describe('LoginCase', () => {
         }
 
         jwtGenerator = {
-            execute: vi.fn(),
-        }
+            encode: vi.fn(),
+            decode: vi.fn<<T>(token: string) => Promise<T>>(),
+        } as Mocked<JwtGenerator>
 
         useCase = new LoginCase(repository, jwtGenerator)
         vi.restoreAllMocks()
@@ -35,17 +36,17 @@ describe('LoginCase', () => {
         const token = faker.internet.jwt()
 
         repository.searchByIdentifier.mockResolvedValue(user)
-        jwtGenerator.execute.mockResolvedValue(token)
+        jwtGenerator.encode.mockResolvedValue(token)
 
         const result = await useCase.login(email.value, plain)
 
         expect(repository.searchByIdentifier).toHaveBeenCalledTimes(1)
-        expect(jwtGenerator.execute).toHaveBeenCalledTimes(1)
+        expect(jwtGenerator.encode).toHaveBeenCalledTimes(1)
 
         const repoCalledWithIdentifier = repository.searchByIdentifier.mock.calls[0]![0]!
         expect(repoCalledWithIdentifier.value).toBe(email.value)
 
-        const jwtCalledWithIdentifier = jwtGenerator.execute.mock.calls[0]![0]!
+        const jwtCalledWithIdentifier = jwtGenerator.encode.mock.calls[0]![0]!
         expect(jwtCalledWithIdentifier).toStrictEqual({
             uuid: user.uuid.value,
             identifier: user.identifier.value,
@@ -62,7 +63,7 @@ describe('LoginCase', () => {
         const token = faker.internet.jwt()
 
         repository.searchByIdentifier.mockResolvedValue(user)
-        jwtGenerator.execute.mockResolvedValue(token)
+        jwtGenerator.encode.mockResolvedValue(token)
 
         const result = await useCase.login(username.value, plain)
 

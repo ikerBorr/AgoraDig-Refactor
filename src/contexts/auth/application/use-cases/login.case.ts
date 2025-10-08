@@ -6,6 +6,7 @@ import { PasswordMismatchError } from '@/contexts/auth/domain/exceptions/passwor
 import { inject } from 'inversify'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
 import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
+import type { DecodedSessionCookieDto } from '@/contexts/auth/application/dto/decoded-session-cookie.dto'
 
 export class LoginCase {
     constructor(
@@ -26,11 +27,11 @@ export class LoginCase {
 
         if (user.banned) throw new LoginErrors.UserBannedError()
 
-        return await this.jwtGenerator.execute({
+        return await this.jwtGenerator.encode({
             uuid: user.uuid.value,
             identifier: user.identifier.value,
             banned: user.banned,
-        })
+        } as DecodedSessionCookieDto)
     }
 
     private async findUser(identifier: Identifier): Promise<AuthUser> {

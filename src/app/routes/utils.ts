@@ -2,7 +2,7 @@ import type express from 'express'
 import type { z } from 'zod'
 
 export function createSessionCookie(res: express.Response, token: string) {
-    res.cookie('__AgoraDig_Session', token, {
+    res.cookie(process.env.SESSION_COOKIE_NAME || 'session', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
