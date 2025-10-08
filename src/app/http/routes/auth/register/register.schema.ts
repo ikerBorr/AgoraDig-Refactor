@@ -26,9 +26,7 @@ export const registerSchema = z.object({
         .min(3, { message: 'Username must be at least 3 characters long' })
         .max(30, { message: 'Username must be at most 30 characters long' }),
 
-    email: z
-        .string()
-        .nonempty('Email is required'),
+    email: z.string().nonempty('Email is required'),
     password: z
         .string()
         .nonempty('Password is required')
@@ -39,7 +37,5 @@ export const registerSchema = z.object({
         .max(500, { message: 'Description must be at most 500 characters long' })
         .optional(),
 
-    acceptsPublicity: z
-        .boolean()
-        .optional(),
+    acceptsPublicity: z.boolean().optional(),
 })

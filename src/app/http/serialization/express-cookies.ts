@@ -1,4 +1,4 @@
-import type express from "express";
+import type express from 'express'
 
 export function createSessionCookie(res: express.Response, token: string) {
     res.cookie(process.env.SESSION_COOKIE_NAME || 'session', token, {

@@ -1,4 +1,4 @@
-import type {z} from "zod/index";
+import type { z } from 'zod/index'
 
 export function zodErrorFormatter(error: z.ZodError): string {
     if (!error?.issues?.length) {

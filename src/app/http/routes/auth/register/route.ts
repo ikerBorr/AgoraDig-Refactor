@@ -1,8 +1,8 @@
-import type express from "express";
-import type {Exception} from "@/app/http/serialization/http-exception-mapper";
-import {registerSchema} from "@/app/http/routes/auth/register/register.schema";
-import {registerErrorMapper} from "@/app/http/routes/auth/register/register.error-mapper";
-import {zodErrorFormatter} from "@/app/http/serialization/zod-error-formatter";
+import type express from 'express'
+import type { Exception } from '@/app/http/serialization/http-exception-mapper'
+import { registerSchema } from '@/app/http/routes/auth/register/register.schema'
+import { registerErrorMapper } from '@/app/http/routes/auth/register/register.error-mapper'
+import { zodErrorFormatter } from '@/app/http/serialization/zod-error-formatter'
 
 export function POST(req: express.Request, res: express.Response) {
     const parsed = registerSchema.safeParse(req.body)
@@ -16,7 +16,6 @@ export function POST(req: express.Request, res: express.Response) {
         const data = parsed.data
 
         console.log(data)
-
 
         return res.status(200).json({ code: 'SUCCESS', message: 'Login successful' })
     } catch (error) {

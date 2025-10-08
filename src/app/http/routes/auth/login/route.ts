@@ -5,8 +5,8 @@ import type { LoginCase } from '@/contexts/auth/application/use-cases/login.case
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
 import type { Exception } from '@/app/http/serialization/http-exception-mapper'
 import { loginErrorMapper } from '@/app/http/routes/auth/login/login.error-mapper'
-import {zodErrorFormatter} from "@/app/http/serialization/zod-error-formatter";
-import {createSessionCookie} from "@/app/http/serialization/express-cookies";
+import { zodErrorFormatter } from '@/app/http/serialization/zod-error-formatter'
+import { createSessionCookie } from '@/app/http/serialization/express-cookies'
 
 export async function POST(req: express.Request, res: express.Response) {
     const parsed = loginSchema.safeParse(req.body)
