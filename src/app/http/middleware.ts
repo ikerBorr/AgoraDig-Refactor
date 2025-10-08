@@ -16,6 +16,10 @@ export async function middleware(
     const user = await getUser(req.signedCookies)
     exportUser(res, user)
 
+    if (req.path === "/") {
+        return res.redirect("/api/docs")
+    }
+
     if (isProtectedEndpoint(req.path) && !user) {
         return res
             .status(401)
