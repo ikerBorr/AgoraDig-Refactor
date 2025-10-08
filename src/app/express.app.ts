@@ -7,6 +7,7 @@ import { config } from 'dotenv'
 import morgan from 'morgan'
 import type http from 'http'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 config()
 
@@ -79,6 +80,7 @@ export class ExpressApp {
     }
 
     private initializeMiddlewares(): void {
+        this.app.use(cookieParser(process.env.COOKIE_SECRET))
         this.app.set('trust proxy', 1)
 
         this.app.use(

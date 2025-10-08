@@ -1,19 +1,21 @@
 import type { AuthUserRepository } from '@/contexts/auth/domain/ports/auth-user.repository'
-import type { ResponseAuthUserDto } from '@/contexts/auth/application/dto/response-auth-user.dto'
 import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
 import type { AuthUser } from '@/contexts/auth/domain/entities/auth-user'
 import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exceptions'
 import { PasswordMismatchError } from '@/contexts/auth/domain/exceptions/password.exceptions'
 import { inject } from 'inversify'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
+import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
 
 export class LoginCase {
     constructor(
         @inject(AUTH_CONTAINER.AuthUserRepository)
         private readonly userRepository: AuthUserRepository,
+        @inject(AUTH_CONTAINER.JwtGenerator)
+        private readonly jwtGenerator: JwtGenerator,
     ) {}
 
-    async login(identifierRaw: string, password: string): Promise<ResponseAuthUserDto> {
+    async login(identifierRaw: string, password: string): Promise<string> {
         const identifier = Identifier.from(identifierRaw)
 
         const user = await this.findUser(identifier)
@@ -24,10 +26,11 @@ export class LoginCase {
 
         if (user.banned) throw new LoginErrors.UserBannedError()
 
-        return {
+        return await this.jwtGenerator.execute({
             uuid: user.uuid.value,
             identifier: user.identifier.value,
-        }
+            banned: user.banned,
+        })
     }
 
     private async findUser(identifier: Identifier): Promise<AuthUser> {
