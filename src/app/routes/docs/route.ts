@@ -3,7 +3,7 @@ import YAML from 'yamljs'
 import path from 'path'
 
 export async function GET(_req: express.Request, res: express.Response) {
-    const specPath = path.resolve(process.cwd(), './docs/api/openAPI.yaml')
+    const specPath = path.resolve(process.cwd(), './docs/api/openapi.yaml')
     const spec = YAML.load(specPath)
     const specJson = JSON.stringify(spec)
 

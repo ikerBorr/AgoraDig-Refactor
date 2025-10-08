@@ -1,204 +1,238 @@
 # AgoraDig Refactor
 
-> A complete architectural transformation of [**AgoraDig**](https://github.com/CPV05/AgoraDig) by **CPV05**, migrating to **TypeScript** with **Hexagonal Architecture** and **Domain-Driven Design** principles.
+> Enterprise-grade architectural transformation of [AgoraDig](https://github.com/CPV05/AgoraDig), implementing **TypeScript**, **Hexagonal Architecture**, and **Domain-Driven Design** principles for enhanced scalability and maintainability.
+
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+---
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Project Status](#-project-status)
+- [Architecture](#-architecture)
+- [Technology Stack](#-technology-stack)
+- [Getting Started](#-getting-started)
+- [Available Scripts](#-available-scripts)
+- [Testing Strategy](#-testing-strategy)
+- [Documentation](#-documentation)
+- [License](#-license)
+
+---
+
+## 🎯 Overview
+
+AgoraDig Refactor represents a comprehensive modernization effort, transforming a monolithic JavaScript application into a robust, modular system built on industry-standard architectural patterns.
+
+### Key Objectives
+
+- **Separation of Concerns** — Clear layered architecture with distinct domain, application, and infrastructure boundaries
+- **Framework Independence** — Domain logic completely decoupled from external dependencies
+- **Enhanced Testability** — Comprehensive testing capabilities through dependency injection and isolated components
+- **Scalability & Maintainability** — Structured foundation for sustainable growth and feature expansion
+- **Developer Experience** — Improved tooling, documentation, and onboarding processes
 
 ---
 
 ## 📊 Project Status
 
-| Area | Status | Description |
-|------|--------|-------------|
-| **Backend (API)** | 🟡 In Progress | Refactoring legacy `server.js` into modular TypeScript with DDD architecture |
-| **Frontend** | ⚪ Planned | Separate Next.js application (coming soon) |
-| **Infrastructure** | 🟡 Partial | External dependencies dockerized, some services pending |
-| **Documentation** | 🟡 In Progress | Endpoints documented in Markdown and OpenAPI (Swagger) |
-| **Testing** | 🟡 In Progress | Unit tests with Vitest framework |
+| Component | Status | Description |
+|-----------|--------|-------------|
+| **Backend API** | 🟡 In Progress | TypeScript migration with DDD architecture implementation |
+| **Frontend** | ⚪ Planned | Decoupled Next.js application |
+| **Infrastructure** | 🟡 Partial | Containerized dependencies with ongoing service migration |
+| **Documentation** | 🟡 In Progress | Markdown and OpenAPI/Swagger specifications |
+| **Testing** | 🟡 In Progress | Unit and integration tests using Vitest |
 
----
-
-## 🎯 Project Philosophy
-
-This refactor demonstrates a **strong technical and architectural evolution**, transforming a monolithic JavaScript application into a **clean, modular, and scalable system**.
-
-### Core Objectives
-
-- **Separation of Concerns** — Clear distinction between domain, application, and infrastructure layers
-- **Technological Independence** — Domain layer completely decoupled from frameworks and libraries
-- **Testability** — Isolated testing for each use case and component
-- **Maintainability & Scalability** — Structured growth without architectural degradation
-- **Observability & Documentation** — Enhanced integration and contributor onboarding
-
-> **In essence:** Expressive, modular, and domain-oriented code
+**Legend:** 🟢 Complete | 🟡 In Progress | ⚪ Planned | 🔴 Blocked
 
 ---
 
 ## 🏗️ Architecture
 
-### Hexagonal Architecture
+### Hexagonal Architecture (Ports & Adapters)
 
-The backend follows **Hexagonal Architecture** (Ports & Adapters) inspired by **Domain-Driven Design**.
+The application follows clean architecture principles with clear separation between layers:
 
-#### **Domain Layer**
-Pure business logic expressed through:
-- **Entities** — `AuthUser`, etc.
-- **Value Objects** — `Email`, `Username`, `Password`, `Uuid`, etc.
-- **Domain Exceptions** — `InvalidEmailFormatError`, `PasswordTooShortError`, etc.
+#### Domain Layer
+Pure business logic with zero external dependencies:
+- **Entities** — Core business objects (`AuthUser`)
+- **Value Objects** — Immutable domain primitives (`Email`, `Username`, `Password`, `Uuid`)
+- **Domain Exceptions** — Business rule violations (`InvalidEmailFormatError`, `PasswordTooShortError`)
 
-#### **Application Layer**
-Implements **use cases** (e.g., `LoginCase`) that orchestrate:
-- Entities and domain services
-- Repository interfaces
-- DTOs and application-level errors
+#### Application Layer
+Orchestrates use cases and defines contracts:
+- **Use Cases** — Business workflows (`LoginCase`)
+- **Ports** — Interface definitions for infrastructure
+- **DTOs** — Data transfer objects for inter-layer communication
+- **Application Exceptions** — Use case specific errors
 
-#### **Infrastructure Layer**
-Real implementations of ports:
-- Database repositories
-- External APIs and adapters
-- Currently includes `InMemoryAuthUserRepository` for fast testing
+#### Infrastructure Layer
+Concrete implementations and external integrations:
+- **Repositories** — Data persistence implementations
+- **Adapters** — External service integrations
+- **Framework Setup** — Express configuration and middleware
+- **Testing Doubles** — In-memory implementations (`InMemoryAuthUserRepository`)
 
 ---
 
 ## 🔧 Technology Stack
 
 ### Backend
-- **Runtime:** Node.js / Bun
-- **Language:** TypeScript
-- **Framework:** Express
-- **Persistence:** PostgreSQL (migrating from MongoDB)
-- **Cache:** Redis
-- **Testing:** Vitest, Faker, Mother Objects
-- **Infrastructure:** Docker, Docker Compose
 
-### Frontend *(Planned)*
-- **Framework:** Next.js
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Node.js / Bun** | 20.x+ | Runtime environment |
+| **TypeScript** | 5.x | Type-safe development |
+| **Express** | 4.x | HTTP server framework |
+| **PostgreSQL** | 15.x | Primary database |
+| **Redis** | 7.x | Caching and rate limiting |
+| **Vitest** | Latest | Testing framework |
+| **Docker** | Latest | Containerization |
 
-### Documentation
-- **Formats:** Markdown, OpenAPI (Swagger)
+### Frontend (Planned)
+
+| Technology | Purpose |
+|------------|---------|
+| **Next.js** | React framework |
+| **TypeScript** | Type safety |
+
+### Development Tools
+
+- **ESLint** — Code quality and style enforcement
+- **Prettier** — Code formatting
+- **Faker** — Test data generation
+- **Docker Compose** — Multi-container orchestration
 
 ---
 
-## 🧪 Testing Strategy
+## 🚀 Getting Started
 
-- **Framework:** Vitest
-- **Pattern:** Mother Objects + Mocked Repositories
-- **Coverage:** Use cases and Value Objects
-- **Mocks:** Simulated infrastructure dependencies
+### Prerequisites
+
+- Node.js 20.x+ or Bun 1.x+
+- Docker and Docker Compose
+- PostgreSQL 15.x (or use Docker)
+- Redis 7.x (or use Docker)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ikerBorr/AgoraDig-Refactor
+   cd AgoraDig-Refactor
+   ```
+
+2. **Install dependencies**
+   ```bash
+   bun install
+   ```
+
+3. **Configure environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. **Start infrastructure services**
+   ```bash
+   bun run docker:dev
+   ```
+
+The API will be available at `http://localhost:3000`
+
+> The API documentation is available at http://localhost:3000/api/docs.
 
 ---
 
 ## 📦 Available Scripts
 
-All commands use **Bun** as the runtime for optimal performance and developer experience.
+### Development
 
-### Development & Routing
-
-#### `bun run generate:routes`
-Generates API route definitions by scanning application modules and producing a routing map.
-
-#### `bun run dev`
-Starts the development server with hot reloading:
-1. Generates routes
-2. Runs the app in watch mode
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start development server with hot reload |
+| `bun run generate:routes` | Generate API route definitions from modules |
 
 ### Code Quality
 
-#### `bun run lint`
-Runs ESLint to check for code style and syntax issues.
+| Command | Description |
+|---------|-------------|
+| `bun run lint` | Run ESLint for code analysis |
+| `bun run lint:fix` | Auto-fix ESLint issues |
+| `bun run format` | Format code with Prettier |
+| `bun run format:check` | Verify code formatting (CI-friendly) |
+| `bun run typecheck` | Validate TypeScript types |
 
-#### `bun run lint:fix`
-Automatically fixes common ESLint issues.
+### Testing
 
-#### `bun run format`
-Formats all source and test files using Prettier.
-
-#### `bun run format:check`
-Validates formatting without modifying files (ideal for CI/CD).
-
-### Type Checking & Testing
-
-#### `bun run typecheck`
-Validates TypeScript types across the entire project without generating output files.
-
-#### `bun run test`
-Runs all tests once (headless mode, recommended for CI/CD).
-
-#### `bun run test:watch`
-Runs tests in watch mode, re-running on file changes.
-
-#### `bun run test:coverage`
-Executes tests and generates coverage reports.
+| Command | Description |
+|---------|-------------|
+| `bun run test` | Run all tests (CI mode) |
+| `bun run test:watch` | Run tests in watch mode |
+| `bun run test:coverage` | Generate coverage reports |
 
 ### Build & Deployment
 
-#### `bun run clean`
-Deletes the `dist` folder for a clean build environment.
+| Command | Description |
+|---------|-------------|
+| `bun run clean` | Remove build artifacts |
+| `bun run prebuild` | Run full pre-build validation pipeline |
+| `bun run build` | Compile TypeScript to JavaScript |
+| `bun run start:node` | Start production server (Node.js) |
+| `bun run start:bun` | Start production server (Bun) |
 
-#### `bun run prebuild`
-Complete pre-build validation pipeline:
-1. Cleans previous build
-2. Regenerates routes
-3. Runs linter
-4. Executes tests
+### Docker Operations
 
-#### `bun run build`
-Compiles TypeScript to JavaScript in the `dist` directory.
+| Command | Description |
+|---------|-------------|
+| `bun run docker:build` | Build Docker images |
+| `bun run docker:dev` | Start development environment |
+| `bun run docker:restart` | Restart containers |
+| `bun run docker:clean` | Remove containers and volumes |
+| `bun run docker:rebuild` | Full rebuild (no cache) |
 
-#### `bun run start:node`
-Runs the compiled app using Node.js with source maps enabled.
+---
 
-#### `bun run start:bun`
-Runs the compiled app using Bun for better performance.
+## 🧪 Testing Strategy
 
-### Docker & Environment
+### Framework & Tools
 
-#### `bun run docker:build`
-Builds all Docker images from `docker-compose.yml`.
-
-#### `bun run docker:restart`
-Restarts running containers without rebuilding.
-
-#### `bun run docker:dev`
-Starts the development environment (database, Redis, etc.) and streams logs.
-
-#### `bun run docker:clean`
-Stops and removes all containers and volumes.
-
-#### `bun run docker:rebuild`
-Full environment rebuild:
-1. Stops and removes containers
-2. Rebuilds images (no cache)
-3. Starts services in detached mode
-
-> Use after updating dependencies or Docker configurations
+- **Vitest** — Fast, modern testing framework
+- **Faker** — Realistic test data generation
+- **Mother Objects** — Reusable test data builders
+- **Mock Repositories** — Isolated infrastructure testing
 
 ---
 
 ## 📚 Documentation
 
 ### API Documentation
-- **Markdown:** `/docs/endpoints.md` — Developer-friendly reference
-- **OpenAPI:** [**http://localhost:3000/api/docs**](http://localhost:3000/api/docs)— Swagger-compatible specification
 
-### Configuration
-- **Environment:** `.env.example` — All required environment variables documented
-- **Docker:** Ready-to-run compose configuration
-- **Scripts:** Automated testing and deployment workflows
+- **Interactive Docs:** [http://localhost:3000/api/docs](http://localhost:3000/api/docs) (Swagger UI)
+- **Markdown Reference:** [`/docs/endpoints.md`](./docs/endpoints.md)
+- **OpenAPI Spec:** [`/docs/openapi.yaml`](./docs/openapi.yaml)
 
----
+### Additional Resources
 
-## 🗺️ Roadmap
-
-- [ ] Complete TypeScript migration
-- [ ] Implement Redis rate limiter for login attempts
-- [ ] Build independent Next.js frontend
-- [ ] Complete Dockerization of all external services
-- [ ] Achieve 80%+ test coverage
-- [ ] Deploy staging environment
+- **Environment Setup:** [`.env.example`](.env.example)
+- **Docker Configuration:** [`docker-compose.yml`](docker-compose.yml)
+- **Architecture Guide:** [`/docs/architecture.md`](./docs/architecture.md) (not yet)
 
 ---
 
-## Credits
+## 📄 License
 
-This project is based on the original [**AgoraDig**](https://github.com/CPV05/AgoraDig) by **CPV05**.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This version modernizes and modularizes the codebase using **Domain-Driven Design** and **Clean Architecture** principles.
+---
+
+## 🙏 Credits
+
+**Original Project:** [AgoraDig](https://github.com/CPV05/AgoraDig) by **CPV05**
+
+**Refactor Lead:** Modernization and architectural transformation implementing Domain-Driven Design and Clean Architecture principles.
+
+---
