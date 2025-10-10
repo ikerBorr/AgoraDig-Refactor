@@ -9,7 +9,7 @@ export abstract class Exception<T> extends Error {
     toPrimitives() {
         return {
             name: this.name,
-            message: this.message
+            message: this.message,
         }
     }
 }

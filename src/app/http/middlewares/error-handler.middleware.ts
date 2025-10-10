@@ -3,7 +3,7 @@ import { DomainException } from '@/contexts/shared/domain/exceptions/domain.exce
 import { ApplicationException } from '@/contexts/shared/application/exceptions/application.exception'
 import { DomainExceptionCode } from '@/contexts/shared/domain/exceptions/domain-code.exception'
 import { ApplicationExceptionCode } from '@/contexts/shared/application/exceptions/application-code.exception'
-import type {Exception} from "@/libs/exception/exception";
+import type { Exception } from '@/libs/exception/exception'
 
 export function errorHandlerMiddleware(
     err: Exception<unknown>,
