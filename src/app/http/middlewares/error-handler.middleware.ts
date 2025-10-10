@@ -3,10 +3,10 @@ import { DomainException } from '@/contexts/shared/domain/exceptions/domain.exce
 import { ApplicationException } from '@/contexts/shared/application/exceptions/application.exception'
 import { DomainExceptionCode } from '@/contexts/shared/domain/exceptions/domain-code.exception'
 import { ApplicationExceptionCode } from '@/contexts/shared/application/exceptions/application-code.exception'
-import type { Exception } from '@/app/http/serialization/http-exception-mapper'
+import type {Exception} from "@/libs/exception/exception";
 
 export function errorHandlerMiddleware(
-    err: Exception,
+    err: Exception<unknown>,
     _req: Request,
     res: Response,
     next: NextFunction,
@@ -23,7 +23,7 @@ export function errorHandlerMiddleware(
         return 500
     })()
 
-    return res.status(status).json({ code: err.code, message: err.message })
+    return res.status(status).json(err.toPrimitives())
 }
 
 function mapDomainException(code: DomainExceptionCode): number {

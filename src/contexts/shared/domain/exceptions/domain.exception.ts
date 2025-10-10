@@ -1,9 +1,7 @@
-import type { DomainExceptionCode } from '@/contexts/shared/domain/exceptions/domain-code.exception'
+import {Exception} from "@/libs/exception/exception";
+import type {DomainExceptionCode} from "@/contexts/shared/domain/exceptions/domain-code.exception";
 
-export abstract class DomainException extends Error {
-    abstract override readonly name: string
-    abstract readonly code: DomainExceptionCode
-
+export abstract class DomainException extends Exception<DomainExceptionCode> {
     protected constructor(message: string) {
         super(message)
     }
