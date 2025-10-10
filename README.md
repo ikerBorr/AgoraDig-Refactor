@@ -73,7 +73,7 @@ Orchestrates use cases and defines contracts:
 Concrete implementations and external integrations:
 - **Repositories** — Data persistence implementations
 - **Adapters** — External service integrations
-- **Framework Setup** — Express configuration and middleware
+- **Framework Setup** — Express configuration and permissionHandler
 - **Testing Doubles** — In-memory implementations (`InMemoryAuthUserRepository`)
 
 ---

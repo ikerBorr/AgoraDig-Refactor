@@ -3,7 +3,8 @@ import { Router } from 'express'
 import { ExpressServer } from '@/app/http/express.server'
 // @ts-ignore auto-generated
 import { router as routers } from '@/app/http/routes/auto-router'
-import { middleware } from '@/app/http/middleware'
+import { permissionHandlerMiddleware } from '@/app/http/middlewares/permission-handler.middleware'
+import { errorHandlerMiddleware } from '@/app/http/middlewares/error-handler.middleware'
 
 function generateRoutes() {
     const router = Router()
@@ -35,7 +36,8 @@ function main() {
 
     app.enableHealthCheck('/health').useRouter(routes).setupGracefulShutdown()
 
-    app.useMiddleware({ path: '/', handler: middleware })
+    app.useMiddleware({ path: '/', handler: permissionHandlerMiddleware })
+    app.useErrorHandler(errorHandlerMiddleware)
 
     app.start().catch((err) => {
         console.error('Failed to start server:', err)

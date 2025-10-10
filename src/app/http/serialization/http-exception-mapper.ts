@@ -7,8 +7,3 @@ export interface HttpResponse {
 }
 
 export type Exception = DomainException | ApplicationException
-
-export interface HttpExceptionResponse {
-    status: number
-    response: HttpResponse
-}

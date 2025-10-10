@@ -3,8 +3,6 @@ import { loginSchema } from '@/app/http/routes/auth/login/login.schema'
 import { AuthContainer } from '@/contexts/auth/infrastructure/di/inversify.container'
 import type { LoginCase } from '@/contexts/auth/application/use-cases/login.case'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
-import type { Exception } from '@/app/http/serialization/http-exception-mapper'
-import { loginErrorMapper } from '@/app/http/routes/auth/login/login.error-mapper'
 import { zodErrorFormatter } from '@/app/http/serialization/zod-error-formatter'
 import { createSessionCookie } from '@/app/http/serialization/express-cookies'
 
@@ -16,20 +14,14 @@ export async function POST(req: express.Request, res: express.Response) {
             .json({ code: 'VALIDATION_ERROR', message: zodErrorFormatter(parsed.error) })
     }
 
-    try {
-        const { identifier, password } = parsed.data
+    const { identifier, password } = parsed.data
 
-        const token = await AuthContainer.get<LoginCase>(AUTH_CONTAINER.LoginCase).login(
-            identifier,
-            password,
-        )
+    const token = await AuthContainer.get<LoginCase>(AUTH_CONTAINER.LoginCase).login(
+        identifier,
+        password,
+    )
 
-        createSessionCookie(res, token)
+    createSessionCookie(res, token)
 
-        return res.status(200).json({ code: 'SUCCESS', message: 'Login successful' })
-    } catch (error) {
-        console.error(error)
-        const { status, response } = loginErrorMapper(error as Exception)
-        return res.status(status).json(response)
-    }
+    return res.status(200).json({ code: 'SUCCESS', message: 'Login successful' })
 }

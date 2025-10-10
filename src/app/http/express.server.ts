@@ -28,7 +28,7 @@ export interface CustomMiddleware {
     handler: RequestHandler | ErrorRequestHandler
 }
 
-export interface ErrorResponse {
+interface ErrorResponse {
     statusCode: number
     error: string
     message: string
@@ -43,6 +43,7 @@ export class ExpressServer {
     private server: http.Server | undefined
     private routers: Router | undefined
     private customMiddlewares: CustomMiddleware[]
+    private errorHandler: ErrorRequestHandler | undefined
     private isStarted: boolean = false
 
     constructor(config: ExpressAppConfig = {}) {
@@ -164,41 +165,27 @@ export class ExpressServer {
             })
         })
 
-        this.app.use(
-            (
-                err: ErrorResponse,
-                req: express.Request,
-                res: express.Response,
-                _next: express.NextFunction,
-            ) => {
-                console.error('Error:', err)
+        if (this.errorHandler != null) {
+            this.app.use(this.errorHandler)
+        } else {
+            this.app.use(
+                (
+                    err: Error,
+                    _req: express.Request,
+                    res: express.Response,
+                    _next: express.NextFunction,
+                ) => {
+                    console.error('Error:', err)
 
-                if (err.statusCode === 401 || err.status === 401) {
-                    return res.status(401).json({
-                        statusCode: 401,
-                        error: 'Unauthorized',
-                        message: err.message || 'Authentication required',
-                        timestamp: new Date().toISOString(),
-                        path: req.path,
-                    })
-                }
+                    const message =
+                        this.config.environment === 'production'
+                            ? 'Internal Server Error'
+                            : err.message || 'Something went wrong'
 
-                const statusCode = err.statusCode || Number(err.status) || 500
-                const message =
-                    this.config.environment === 'production'
-                        ? 'Internal Server Error'
-                        : err.message || 'Something went wrong'
-
-                res.status(statusCode).json({
-                    statusCode,
-                    error: err.name || 'Error',
-                    message,
-                    ...(this.config.environment !== 'production' && { stack: err.stack }),
-                    timestamp: new Date().toISOString(),
-                    path: req.path,
-                })
-            },
-        )
+                    res.status(500).json({ error: err.name || 'Error', message })
+                },
+            )
+        }
     }
 
     public useRouter(router: Router): this {
@@ -215,6 +202,15 @@ export class ExpressServer {
         }
 
         this.customMiddlewares.push(middleware)
+        return this
+    }
+
+    public useErrorHandler(errorHandler: ErrorRequestHandler): this {
+        if (this.isStarted) {
+            throw new Error('Cannot add error handler after server has started')
+        }
+
+        this.errorHandler = errorHandler
         return this
     }
 
@@ -236,7 +232,6 @@ export class ExpressServer {
                 next()
             },
         })
-
         return this
     }
 

@@ -6,8 +6,6 @@ export interface DomainEventParams<T> {
 }
 
 export abstract class DomainEvent<T> {
-    static EVENT_NAME: string
-
     readonly aggregateId: string
     readonly eventId: string
     readonly occurredOn: Date

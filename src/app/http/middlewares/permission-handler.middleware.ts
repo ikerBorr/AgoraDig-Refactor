@@ -8,7 +8,7 @@ import type { DecodedSessionCookieDto } from '@/contexts/auth/application/dto/de
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || '__AgoraDig_Session'
 const PROTECTED_PREFIXES: string[] = []
 
-export async function middleware(
+export async function permissionHandlerMiddleware(
     req: express.Request,
     res: express.Response,
     next: express.NextFunction,
@@ -16,8 +16,8 @@ export async function middleware(
     const user = await getUser(req.signedCookies)
     exportUser(res, user)
 
-    if (req.path === "/" && process.env.NODE_ENV === "development") {
-        return res.redirect("/api/docs")
+    if (req.path === '/' && process.env.NODE_ENV === 'development') {
+        return res.redirect('/api/docs')
     }
 
     if (isProtectedEndpoint(req.path) && !user) {
