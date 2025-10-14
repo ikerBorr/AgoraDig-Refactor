@@ -1,4 +1,4 @@
-import { ValueObject } from '@/contexts/shared/domain/value-objects/value-object'
+import { ValueObject } from '@/contexts/shared-kernel/domain/value-objects/value-object'
 import { randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto'
 import { PasswordErrors } from '@/contexts/auth/domain/exceptions/password.exceptions'
 

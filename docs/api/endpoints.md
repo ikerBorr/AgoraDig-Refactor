@@ -31,7 +31,7 @@ The AgoraDig API follows RESTful principles and uses JSON for request and respon
 
 Currently, the API uses **session-based authentication** with the following flow:
 
-1. Client sends credentials to `/auth/login`
+1. Member sends credentials to `/auth/login`
 2. Server validates and creates a cookie session
 3. Cookie session token returned in response
 4. Subsequent requests include cookie session token

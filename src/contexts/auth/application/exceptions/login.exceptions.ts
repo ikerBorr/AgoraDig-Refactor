@@ -1,5 +1,5 @@
-import { ApplicationException } from '@/contexts/shared/application/exceptions/application.exception'
-import { ApplicationExceptionCode } from '@/contexts/shared/application/exceptions/application-code.exception'
+import { ApplicationException } from '@/contexts/shared-kernel/application/exceptions/application.exception'
+import { ApplicationExceptionCode } from '@/contexts/shared-kernel/application/exceptions/application-code.exception'
 
 export class InvalidCredentialsError extends ApplicationException {
     readonly name = 'INVALID_CREDENTIALS'

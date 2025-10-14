@@ -1,4 +1,7 @@
-import { DomainEvent, type DomainEventParams } from '@/contexts/shared/domain/entities/domain-event'
+import {
+    DomainEvent,
+    type DomainEventParams,
+} from '@/contexts/shared-kernel/domain/entities/domain-event'
 
 export interface UserAuthCreatedPrimitives {
     firstName: string

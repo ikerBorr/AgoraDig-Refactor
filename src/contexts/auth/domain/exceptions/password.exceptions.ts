@@ -1,5 +1,5 @@
-import { DomainException } from '@/contexts/shared/domain/exceptions/domain.exception'
-import { DomainExceptionCode } from '@/contexts/shared/domain/exceptions/domain-code.exception'
+import { DomainException } from '@/contexts/shared-kernel/domain/exceptions/domain.exception'
+import { DomainExceptionCode } from '@/contexts/shared-kernel/domain/exceptions/domain-code.exception'
 
 export class PasswordHashFormatInvalidError extends DomainException {
     readonly name = 'PASSWORD_HASH_FORMAT_INVALID'

@@ -1,5 +1,5 @@
 import { Container } from 'inversify'
-import { SharedContainer } from '@/contexts/shared/infrastructure/di/inversify.container'
+import { SharedContainer } from '@/contexts/shared-kernel/infrastructure/di/inversify.container'
 import type { AuthUserRepository } from '@/contexts/auth/domain/ports/auth-user.repository'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
 import { InMemoryAuthUserRepository } from '@/contexts/auth/infrastructure/repositories/in-memory-auth-user'

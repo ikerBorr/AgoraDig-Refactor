@@ -7,6 +7,7 @@ import { inject } from 'inversify'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
 import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
 import type { DecodedSessionCookieDto } from '@/contexts/auth/application/dto/decoded-session-cookie.dto'
+import type { LoginCommand } from '@/contexts/auth/application/commands/login.command'
 
 export class LoginCase {
     constructor(
@@ -16,12 +17,12 @@ export class LoginCase {
         private readonly jwtGenerator: JwtGenerator,
     ) {}
 
-    async login(identifierRaw: string, password: string): Promise<string> {
-        const identifier = Identifier.from(identifierRaw)
+    async execute(command: LoginCommand): Promise<string> {
+        const identifier = Identifier.from(command.identifier)
 
         const user = await this.findUser(identifier)
 
-        this.validatePassword(user, password)
+        this.validatePassword(user, command.password)
 
         // TODO: Implement login attempt rate limiting using Redis (track attempts per IP and identifier).
 

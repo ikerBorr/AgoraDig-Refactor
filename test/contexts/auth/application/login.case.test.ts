@@ -38,7 +38,7 @@ describe('LoginCase', () => {
         repository.searchByIdentifier.mockResolvedValue(user)
         jwtGenerator.encode.mockResolvedValue(token)
 
-        const result = await useCase.login(email.value, plain)
+        const result = await useCase.execute({ identifier: email.value, password: plain })
 
         expect(repository.searchByIdentifier).toHaveBeenCalledTimes(1)
         expect(jwtGenerator.encode).toHaveBeenCalledTimes(1)
@@ -65,7 +65,7 @@ describe('LoginCase', () => {
         repository.searchByIdentifier.mockResolvedValue(user)
         jwtGenerator.encode.mockResolvedValue(token)
 
-        const result = await useCase.login(username.value, plain)
+        const result = await useCase.execute({ identifier: username.value, password: plain })
 
         expect(result).toBe(token)
     })
@@ -75,7 +75,10 @@ describe('LoginCase', () => {
         repository.searchByIdentifier.mockResolvedValue(null)
 
         await expect(
-            useCase.login(anyIdentifier.value, PasswordMother.strongPlain()),
+            useCase.execute({
+                identifier: anyIdentifier.value,
+                password: PasswordMother.strongPlain(),
+            }),
         ).rejects.toBeInstanceOf(LoginErrors.InvalidCredentialsError)
     })
 
@@ -91,9 +94,9 @@ describe('LoginCase', () => {
 
         repository.searchByIdentifier.mockResolvedValue(user)
 
-        await expect(useCase.login(id.value, wrongPlain)).rejects.toBeInstanceOf(
-            LoginErrors.InvalidCredentialsError,
-        )
+        await expect(
+            useCase.execute({ identifier: id.value, password: wrongPlain }),
+        ).rejects.toBeInstanceOf(LoginErrors.InvalidCredentialsError)
 
         expect(assertSpy).toHaveBeenCalledWith(wrongPlain)
     })
@@ -110,7 +113,9 @@ describe('LoginCase', () => {
 
         repository.searchByIdentifier.mockResolvedValue(user)
 
-        await expect(useCase.login(id.value, plain)).rejects.toBe(unexpected)
+        await expect(useCase.execute({ identifier: id.value, password: plain })).rejects.toBe(
+            unexpected,
+        )
     })
 
     it('should throw a UserBannedError if the user is banned', async () => {
@@ -120,9 +125,9 @@ describe('LoginCase', () => {
 
         repository.searchByIdentifier.mockResolvedValue(user)
 
-        await expect(useCase.login(id.value, plain)).rejects.toBeInstanceOf(
-            LoginErrors.UserBannedError,
-        )
+        await expect(
+            useCase.execute({ identifier: id.value, password: plain }),
+        ).rejects.toBeInstanceOf(LoginErrors.UserBannedError)
     })
 
     it('should propagate repository errors (e.g., database error)', async () => {
@@ -130,11 +135,15 @@ describe('LoginCase', () => {
         const repoError = new Error('DB connection timeout')
         repository.searchByIdentifier.mockRejectedValue(repoError)
 
-        await expect(useCase.login(id.value, PasswordMother.strongPlain())).rejects.toBe(repoError)
+        await expect(
+            useCase.execute({ identifier: id.value, password: PasswordMother.strongPlain() }),
+        ).rejects.toBe(repoError)
     })
 
     it('should fail if the identifier is invalid (Identifier domain error)', async () => {
         const invalid = 'spaces not allowed@@'
-        await expect(useCase.login(invalid, PasswordMother.strongPlain())).rejects.toBeTruthy()
+        await expect(
+            useCase.execute({ identifier: invalid, password: PasswordMother.strongPlain() }),
+        ).rejects.toBeTruthy()
     })
 })

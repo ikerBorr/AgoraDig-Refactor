@@ -1,9 +1,9 @@
 import type { AuthUserRepository } from '@/contexts/auth/domain/ports/auth-user.repository'
 import { AuthUser } from '@/contexts/auth/domain/entities/auth-user'
-import { Uuid } from '@/contexts/shared/domain/value-objects/uuid'
+import { Uuid } from '@/contexts/shared-kernel/domain/value-objects/uuid'
 import { Password } from '@/contexts/auth/domain/value-objects/password'
 import type { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
-import type { Nullable } from '@/contexts/shared/application/types/nullable'
+import type { Nullable } from '@/contexts/shared-kernel/application/types/nullable'
 
 export class InMemoryAuthUserRepository implements AuthUserRepository {
     private readonly users: AuthUser[] = [

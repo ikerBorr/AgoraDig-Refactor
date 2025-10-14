@@ -1,5 +1,5 @@
 import type { AuthUser } from '@/contexts/auth/domain/entities/auth-user'
-import { Uuid } from '@/contexts/shared/domain/value-objects/uuid'
+import { Uuid } from '@/contexts/shared-kernel/domain/value-objects/uuid'
 import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
 import { Password } from '@/contexts/auth/domain/value-objects/password'
 
