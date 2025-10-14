@@ -8,7 +8,7 @@ export class IdentifierMother {
     static randomUsername(): Identifier {
         const username = faker.internet
             .username()
-            .replace(/[^a-zA-Z0-9._]/g, '')
+            .replaceAll(/[^a-zA-Z0-9._]/g, '')
             .slice(0, 16)
         return Identifier.from(username)
     }
