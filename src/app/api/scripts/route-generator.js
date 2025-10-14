@@ -44,7 +44,7 @@ class RouteGenerator {
     }
 
     _escapeRegExp(str) {
-        return str.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+        return str.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
     }
 
     async _introspectHandlers(absFile) {
@@ -65,7 +65,7 @@ class RouteGenerator {
         const importLines = [`import { Router } from "express";`]
         const registrations = [`const router = Router();`]
 
-        for (const [idx, {file, methods}] of filesWithMethods.entries()) {
+        for (const [idx, { file, methods }] of filesWithMethods.entries()) {
             const endpoint = this._endpointFromPath(file)
             const importPath = this._makeImportPath(file)
             const modVar = `R${idx}`
