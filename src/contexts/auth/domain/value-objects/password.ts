@@ -28,7 +28,7 @@ export class Password extends ValueObject<string> {
 
     matches(plain: string): boolean {
         const [iterationsStr, saltHex, storedHex] = this.value.split('$')
-        const iterations = parseInt(iterationsStr!, 10)
+        const iterations = Number.parseInt(iterationsStr!, 10)
         const salt = Buffer.from(saltHex!, 'hex')
         const storedKey = Buffer.from(storedHex!, 'hex')
 
