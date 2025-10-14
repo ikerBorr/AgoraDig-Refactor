@@ -16,7 +16,7 @@ export const registerSchema = z.object({
     dateOfBirth: z
         .string()
         .nonempty('Date of birth is required')
-        .refine((value) => !isNaN(Date.parse(value)), {
+        .refine((value) => !Number.isNaN(Date.parse(value)), {
             message: 'Date of birth must be a valid date',
         }),
 
