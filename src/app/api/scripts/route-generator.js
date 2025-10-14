@@ -23,7 +23,7 @@ class RouteGenerator {
     }
 
     _endpointFromPath(filePath) {
-        let rel = path.relative(this._baseDir, filePath).replace(/\\/g, '/')
+        let rel = path.relative(this._baseDir, filePath).replaceAll(/\\/g, '/')
 
         const escaped = this._escapeRegExp(this._routerFileName.replace(/\.(ts|js)$/, ''))
         rel = rel.replace(new RegExp(`/${escaped}\\.(ts|js)$`), '')
@@ -31,20 +31,20 @@ class RouteGenerator {
         if (rel === '' || rel === this._routerFileName.replace(/\.(ts|js)$/, '')) rel = '/'
         else rel = '/' + rel
 
-        rel = rel.replace(/\[(.+?)\]/g, ':$1')
+        rel = rel.replaceAll(/\[(.+?)\]/g, ':$1')
 
         return rel
     }
 
     _makeImportPath(targetAbs) {
-        let rel = path.relative(path.dirname(this._endFileDir), targetAbs).replace(/\\/g, '/')
+        let rel = path.relative(path.dirname(this._endFileDir), targetAbs).replaceAll(/\\/g, '/')
         rel = rel.replace(/\.(ts|js)$/, '')
         if (!rel.startsWith('.')) rel = './' + rel
         return rel
     }
 
     _escapeRegExp(str) {
-        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        return str.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')
     }
 
     async _introspectHandlers(absFile) {
