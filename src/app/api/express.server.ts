@@ -56,7 +56,7 @@ export class ExpressServer {
 
     private mergeConfig(config: ExpressAppConfig): Required<ExpressAppConfig> {
         return {
-            port: config.port || parseInt(process.env.PORT!),
+            port: config.port || Number.parseInt(process.env.PORT!),
             mongoUri: config.mongoUri || process.env.MONGO_URI || '',
             sessionSecret: config.sessionSecret || process.env.SESSION_SECRET || '',
             corsOrigins:
@@ -263,10 +263,10 @@ export class ExpressServer {
                     } else {
                         console.error('Server error:', error)
                     }
-                    reject(error)
+                    reject(new Error(error.message))
                 })
             } catch (error) {
-                reject(error)
+                reject(error as Error)
             }
         })
     }
