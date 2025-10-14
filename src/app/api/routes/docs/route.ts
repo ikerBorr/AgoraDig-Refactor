@@ -1,6 +1,6 @@
 import type express from 'express'
 import YAML from 'yamljs'
-import path from 'path'
+import path from 'node:path'
 
 export async function GET(_req: express.Request, res: express.Response) {
     const specPath = path.resolve(process.cwd(), './docs/api/openapi.yaml')
