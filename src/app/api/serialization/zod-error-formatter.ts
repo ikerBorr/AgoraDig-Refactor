@@ -10,7 +10,7 @@ export function zodErrorFormatter(error: z.ZodError): string {
     const fieldList =
         fields.length === 1
             ? fields[0]
-            : `${fields.slice(0, -1).join(', ')} and ${fields[fields.length - 1]}`
+            : `${fields.slice(0, -1).join(', ')} and ${fields.at(fields.length - 1)}`
 
     return `The ${fieldList} ${fields.length > 1 ? 'are' : 'is'} invalid input.`
 }

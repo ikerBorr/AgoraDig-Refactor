@@ -82,7 +82,7 @@ export class Email extends ValueObject<string> {
             }
         }
 
-        const tld = labels[labels.length - 1] || ''
+        const tld = labels.at(labels.length - 1) || ''
         if (!TLD_REGEX.test(tld)) {
             throw new EmailErrors.EmailTldInvalidError()
         }

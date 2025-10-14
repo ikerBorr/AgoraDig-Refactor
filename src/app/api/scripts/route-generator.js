@@ -1,6 +1,6 @@
 import fg from 'fast-glob'
-import { promises as fs } from 'fs'
-import path from 'path'
+import { promises as fs } from 'node:fs'
+import path from 'node:path'
 
 class RouteGenerator {
     HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
@@ -44,7 +44,7 @@ class RouteGenerator {
     }
 
     _escapeRegExp(str) {
-        return str.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        return str.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
     }
 
     async _introspectHandlers(absFile) {
@@ -65,21 +65,20 @@ class RouteGenerator {
         const importLines = [`import { Router } from "express";`]
         const registrations = [`const router = Router();`]
 
-        filesWithMethods.forEach(({ file, methods }, idx) => {
+        for (const [idx, {file, methods}] of filesWithMethods.entries()) {
             const endpoint = this._endpointFromPath(file)
             const importPath = this._makeImportPath(file)
             const modVar = `R${idx}`
 
             importLines.push(`import * as ${modVar} from "${importPath}";`)
-            registrations.push(`{`)
-            registrations.push(`  const ep = ${JSON.stringify(endpoint)};`)
+            registrations.push(`{\n  const ep = ${JSON.stringify(endpoint)};`)
             for (const METHOD of methods) {
                 const lower = METHOD.toLowerCase()
                 registrations.push(`  router.${lower}(ep, ${modVar}.${METHOD});`)
                 console.log(`✔ ${METHOD} ${endpoint}`)
             }
             registrations.push(`}`)
-        })
+        }
 
         registrations.push(`export {router};`)
 
@@ -128,7 +127,8 @@ async function main() {
     }
 }
 
-main().catch((err) => {
+try {
+    await main()
+} catch (err) {
     console.error(err)
-    process.exit(1)
-})
+}

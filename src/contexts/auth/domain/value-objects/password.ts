@@ -1,5 +1,5 @@
 import { ValueObject } from '@/contexts/shared-kernel/domain/value-objects/value-object'
-import { randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto'
+import { randomBytes, pbkdf2Sync, timingSafeEqual } from 'node:crypto'
 import { PasswordErrors } from '@/contexts/auth/domain/exceptions/password.exceptions'
 
 export class Password extends ValueObject<string> {

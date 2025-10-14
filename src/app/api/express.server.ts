@@ -5,7 +5,7 @@ import compression from 'compression'
 import rateLimit from 'express-rate-limit'
 import { config } from 'dotenv'
 import morgan from 'morgan'
-import type http from 'http'
+import type http from 'node:http'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
@@ -42,7 +42,7 @@ export class ExpressServer {
     private readonly config: Required<ExpressAppConfig>
     private server: http.Server | undefined
     private routers: Router | undefined
-    private customMiddlewares: CustomMiddleware[]
+    private readonly customMiddlewares: CustomMiddleware[]
     private errorHandler: ErrorRequestHandler | undefined
     private isStarted: boolean = false
 
@@ -139,13 +139,13 @@ export class ExpressServer {
     }
 
     private applyCustomConfiguration(): void {
-        this.customMiddlewares.forEach((middleware) => {
+        for (const middleware of this.customMiddlewares) {
             if (middleware.path) {
                 this.app.use(middleware.path, middleware.handler)
             } else {
                 this.app.use(middleware.handler)
             }
-        })
+        }
 
         if (this.routers) {
             this.app.use(this.routers)
@@ -165,9 +165,7 @@ export class ExpressServer {
             })
         })
 
-        if (this.errorHandler != null) {
-            this.app.use(this.errorHandler)
-        } else {
+        if (this.errorHandler == null) {
             this.app.use(
                 (
                     err: Error,
@@ -185,6 +183,8 @@ export class ExpressServer {
                     res.status(500).json({ error: err.name || 'Error', message })
                 },
             )
+        } else {
+            this.app.use(this.errorHandler)
         }
     }
 
@@ -294,7 +294,7 @@ export class ExpressServer {
     public setupGracefulShutdown(): this {
         const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
 
-        signals.forEach((signal) => {
+        for (const signal of signals) {
             process.on(signal, async () => {
                 console.log(`\n${signal} received, shutting down gracefully...`)
                 try {
@@ -305,7 +305,7 @@ export class ExpressServer {
                     process.exit(1)
                 }
             })
-        })
+        }
 
         process.on('unhandledRejection', (reason, promise) => {
             console.error('Unhandled Rejection at:', promise, 'reason:', reason)
