@@ -6,7 +6,7 @@ import type { Nullable } from '@/contexts/shared-kernel/application/types/nullab
 import type { DecodedSessionCookieDto } from '@/contexts/auth/application/dto/decoded-session-cookie.dto'
 
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || '__AgoraDig_Session'
-const PROTECTED_PREFIXES: string[] = []
+const PROTECTED_PREFIXES: string[] = ['/example-of-protected-endpoint']
 
 export async function permissionHandlerMiddleware(
     req: express.Request,
