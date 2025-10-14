@@ -7,7 +7,7 @@ import type { DomainEventSubscriber } from '@/contexts/shared-kernel/domain/port
 @injectable()
 export class MemAsyncEventBus extends EventEmitter implements EventBus {
     public async publish(events: DomainEvent<unknown>[]) {
-        events.map((event) => this.emit(event.eventName, event))
+        events.forEach((event) => this.emit(event.eventName, event))
     }
 
     addSubscribers(subscribers: Array<DomainEventSubscriber<DomainEvent<undefined>>>) {
