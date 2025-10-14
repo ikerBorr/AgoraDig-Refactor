@@ -23,7 +23,7 @@ class RouteGenerator {
     }
 
     _endpointFromPath(filePath) {
-        let rel = path.relative(this._baseDir, filePath).replaceAll(/\\/g, '/')
+        let rel = path.relative(this._baseDir, filePath).replaceAll('\\', '/')
 
         const escaped = this._escapeRegExp(this._routerFileName.replace(/\.(ts|js)$/, ''))
         rel = rel.replace(new RegExp(`/${escaped}\\.(ts|js)$`), '')
@@ -37,7 +37,7 @@ class RouteGenerator {
     }
 
     _makeImportPath(targetAbs) {
-        let rel = path.relative(path.dirname(this._endFileDir), targetAbs).replaceAll(/\\/g, '/')
+        let rel = path.relative(path.dirname(this._endFileDir), targetAbs).replaceAll('\\', '/')
         rel = rel.replace(/\.(ts|js)$/, '')
         if (!rel.startsWith('.')) rel = './' + rel
         return rel
