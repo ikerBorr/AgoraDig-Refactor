@@ -3,16 +3,18 @@ import { Uuid } from '@/contexts/shared-kernel/domain/value-objects/uuid'
 import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
 import { Password } from '@/contexts/auth/domain/value-objects/password'
 
-export interface AuthUserPrimitives {
-    uuid: string
+interface InternalAuthUserPrimitives {
+    accountUuid: string
     identifier: string
     password: string
     banned: boolean
 }
 
+export type AuthUserPrimitives = Omit<InternalAuthUserPrimitives, 'password'>
+
 export class AuthUser extends AggregateRoot {
     private constructor(
-        readonly uuid: Uuid,
+        readonly accountUuid: Uuid,
         readonly identifier: Identifier,
         readonly password: Password,
         readonly banned: boolean = false,
@@ -28,9 +30,9 @@ export class AuthUser extends AggregateRoot {
         )
     }
 
-    static fromPrimitives(primitives: AuthUserPrimitives): AuthUser {
+    static fromPrimitives(primitives: InternalAuthUserPrimitives): AuthUser {
         return new AuthUser(
-            new Uuid(primitives.uuid),
+            new Uuid(primitives.accountUuid),
             Identifier.from(primitives.identifier),
             Password.fromHash(primitives.password),
             primitives.banned,
@@ -39,9 +41,8 @@ export class AuthUser extends AggregateRoot {
 
     toPrimitives(): AuthUserPrimitives {
         return {
-            uuid: this.uuid.value,
+            accountUuid: this.accountUuid.value,
             identifier: this.identifier.value,
-            password: this.password.value,
             banned: this.banned,
         }
     }

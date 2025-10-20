@@ -5,7 +5,7 @@ import { IdentifierMother } from '@test/contexts/auth/domain/mothers/identifier.
 import { PasswordMother } from '@test/contexts/auth/domain/mothers/password.mother'
 import { AuthUserMother } from '@test/contexts/auth/domain/mothers/auth-user.mother'
 import { PasswordMismatchError } from '@/contexts/auth/domain/exceptions/password.exceptions'
-import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exceptions'
+import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exception'
 import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
 import { faker } from '@faker-js/faker'
 
@@ -33,10 +33,10 @@ describe('LoginCase', () => {
         const email = IdentifierMother.randomEmail()
         const plain = PasswordMother.strongPlain()
         const user = AuthUserMother.withIdentifier(email.value, { plainPassword: plain })
-        const token = faker.internet.jwt()
+        const session = faker.internet.jwt()
 
         repository.searchByIdentifier.mockResolvedValue(user)
-        jwtGenerator.encode.mockResolvedValue(token)
+        jwtGenerator.encode.mockResolvedValue(session)
 
         const result = await useCase.execute({ identifier: email.value, password: plain })
 
@@ -48,26 +48,28 @@ describe('LoginCase', () => {
 
         const jwtCalledWithIdentifier = jwtGenerator.encode.mock.calls[0]![0]!
         expect(jwtCalledWithIdentifier).toStrictEqual({
-            uuid: user.uuid.value,
+            accountUuid: user.accountUuid.value,
             identifier: user.identifier.value,
             banned: user.banned,
         })
 
-        expect(result).toBe(token)
+        expect(result.session).toStrictEqual(session)
+        expect(result.user).toStrictEqual(user.toPrimitives())
     })
 
     it('should log in successfully with a valid username and correct password', async () => {
         const username = IdentifierMother.randomUsername()
         const plain = PasswordMother.strongPlain()
         const user = AuthUserMother.withIdentifier(username.value, { plainPassword: plain })
-        const token = faker.internet.jwt()
+        const session = faker.internet.jwt()
 
         repository.searchByIdentifier.mockResolvedValue(user)
-        jwtGenerator.encode.mockResolvedValue(token)
+        jwtGenerator.encode.mockResolvedValue(session)
 
         const result = await useCase.execute({ identifier: username.value, password: plain })
 
-        expect(result).toBe(token)
+        expect(result.session).toStrictEqual(session)
+        expect(result.user).toStrictEqual(user.toPrimitives())
     })
 
     it('should throw an InvalidCredentialsError if the user does not exist', async () => {

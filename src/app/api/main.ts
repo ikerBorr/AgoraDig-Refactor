@@ -17,7 +17,7 @@ function generateRoutes() {
     return router
 }
 
-function main() {
+async function main() {
     const routes: Router = generateRoutes()
 
     const app = new ExpressServer({

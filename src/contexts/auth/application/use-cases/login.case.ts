@@ -1,12 +1,11 @@
 import type { AuthUserRepository } from '@/contexts/auth/domain/ports/auth-user.repository'
 import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
-import type { AuthUser } from '@/contexts/auth/domain/entities/auth-user'
-import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exceptions'
+import type { AuthUser, AuthUserPrimitives } from '@/contexts/auth/domain/entities/auth-user'
+import { LoginErrors } from '@/contexts/auth/application/exceptions/login.exception'
 import { PasswordMismatchError } from '@/contexts/auth/domain/exceptions/password.exceptions'
 import { inject } from 'inversify'
-import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
+import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/symbols'
 import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
-import type { DecodedSessionCookieDto } from '@/contexts/auth/application/dto/decoded-session-cookie.dto'
 import type { LoginCommand } from '@/contexts/auth/application/commands/login.command'
 
 export class LoginCase {
@@ -17,7 +16,7 @@ export class LoginCase {
         private readonly jwtGenerator: JwtGenerator,
     ) {}
 
-    async execute(command: LoginCommand): Promise<string> {
+    async execute(command: LoginCommand): Promise<{ session: string; user: AuthUserPrimitives }> {
         const identifier = Identifier.from(command.identifier)
 
         const user = await this.findUser(identifier)
@@ -28,11 +27,10 @@ export class LoginCase {
 
         if (user.banned) throw new LoginErrors.UserBannedError()
 
-        return await this.jwtGenerator.encode({
-            uuid: user.uuid.value,
-            identifier: user.identifier.value,
-            banned: user.banned,
-        } as DecodedSessionCookieDto)
+        const userPrimitives = user.toPrimitives()
+        const session = await this.jwtGenerator.encode(userPrimitives)
+
+        return { session, user: userPrimitives }
     }
 
     private async findUser(identifier: Identifier): Promise<AuthUser> {

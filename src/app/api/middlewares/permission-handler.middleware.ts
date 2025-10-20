@@ -1,9 +1,8 @@
 import type express from 'express'
-import { AuthContainer } from '@/contexts/auth/infrastructure/di/inversify.container'
 import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
-import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
-import type { Nullable } from '@/contexts/shared-kernel/application/types/nullable'
-import type { DecodedSessionCookieDto } from '@/contexts/auth/application/dto/decoded-session-cookie.dto'
+import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/symbols'
+import { ApiContainer } from '@/app/api/container'
+import type { AuthUserPrimitives } from '@/contexts/auth/domain/entities/auth-user'
 
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || '__AgoraDig_Session'
 const PROTECTED_PREFIXES: string[] = ['/example-of-protected-endpoint']
@@ -41,25 +40,23 @@ function isProtectedEndpoint(pathname: string): boolean {
     )
 }
 
-async function getUser(
-    signedCookies: Record<string, string> | undefined,
-): Promise<Nullable<DecodedSessionCookieDto>> {
+async function getUser(signedCookies: Record<string, string> | undefined) {
     if (!signedCookies) return null
 
     const session = signedCookies[COOKIE_NAME]
     if (!session) return null
 
     try {
-        const jwt = AuthContainer.get<JwtGenerator>(AUTH_CONTAINER.JwtGenerator)
-        const { uuid, identifier, banned } = await jwt.decode<DecodedSessionCookieDto>(session)
+        const jwt = (await ApiContainer.container()).get<JwtGenerator>(AUTH_CONTAINER.JwtGenerator)
+        const { accountUuid, identifier, banned } = await jwt.decode<AuthUserPrimitives>(session)
 
-        return { uuid, banned, identifier }
+        return { accountUuid, banned, identifier }
     } catch {
         return null
     }
 }
 
-function exportUser(res: express.Response, user: Nullable<DecodedSessionCookieDto>) {
+function exportUser<T>(res: express.Response, user: T) {
     if (user) {
         res.locals.user = user
     }

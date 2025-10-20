@@ -19,4 +19,4 @@ export class UserBannedError extends ApplicationException {
     }
 }
 
-export * as LoginErrors from './login.exceptions'
+export * as LoginErrors from './login.exception'

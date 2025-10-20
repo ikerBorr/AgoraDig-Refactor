@@ -1,11 +1,11 @@
 import type express from 'express'
 import { loginSchema } from '@/app/api/routes/auth/login/login.schema'
-import { AuthContainer } from '@/contexts/auth/infrastructure/di/inversify.container'
 import type { LoginCase } from '@/contexts/auth/application/use-cases/login.case'
-import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/types'
+import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/symbols'
 import { zodErrorFormatter } from '@/app/api/serialization/zod-error-formatter'
 import { createSessionCookie } from '@/app/api/serialization/express-cookies'
 import type { LoginCommand } from '@/contexts/auth/application/commands/login.command'
+import { ApiContainer } from '@/app/api/container'
 
 export async function POST(req: express.Request, res: express.Response) {
     const parsed = loginSchema.safeParse(req.body)
@@ -16,10 +16,15 @@ export async function POST(req: express.Request, res: express.Response) {
     }
 
     const loginCommand: LoginCommand = parsed.data
+    const useCase = (await ApiContainer.container()).get<LoginCase>(AUTH_CONTAINER.LoginCase)
 
-    const token = await AuthContainer.get<LoginCase>(AUTH_CONTAINER.LoginCase).execute(loginCommand)
+    const { session, user } = await useCase.execute(loginCommand)
 
-    createSessionCookie(res, token)
+    createSessionCookie(res, session)
 
-    return res.status(200).json({ code: 'SUCCESS', message: 'Login successful' })
+    return res.status(200).json({
+        code: 'USER_LOGGED_IN',
+        message: 'Login successful',
+        data: user,
+    })
 }

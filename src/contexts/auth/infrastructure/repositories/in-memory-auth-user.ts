@@ -8,19 +8,19 @@ import type { Nullable } from '@/contexts/shared-kernel/application/types/nullab
 export class InMemoryAuthUserRepository implements AuthUserRepository {
     private readonly users: AuthUser[] = [
         AuthUser.fromPrimitives({
-            uuid: Uuid.random().value,
+            accountUuid: Uuid.random().value,
             identifier: 'john.doe@example.com',
             password: Password.fromPlain('Password123!').value, // hashed on init
             banned: false,
         }),
         AuthUser.fromPrimitives({
-            uuid: Uuid.random().value,
+            accountUuid: Uuid.random().value,
             identifier: 'jane_smith',
             password: Password.fromPlain('SecurePass!9').value,
             banned: false,
         }),
         AuthUser.fromPrimitives({
-            uuid: Uuid.random().value,
+            accountUuid: Uuid.random().value,
             identifier: 'banned.user@example.com',
             password: Password.fromPlain('ValidPass1!').value,
             banned: true,
