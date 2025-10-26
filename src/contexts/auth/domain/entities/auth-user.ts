@@ -3,14 +3,14 @@ import { Uuid } from '@/contexts/shared-kernel/domain/value-objects/uuid'
 import { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
 import { Password } from '@/contexts/auth/domain/value-objects/password'
 
-interface InternalAuthUserPrimitives {
+interface AuthUserPrimitives {
     accountUuid: string
     identifier: string
     password: string
     banned: boolean
 }
 
-export type AuthUserPrimitives = Omit<InternalAuthUserPrimitives, 'password'>
+export type AuthUserCredentials = Omit<AuthUserPrimitives, 'password'>
 
 export class AuthUser extends AggregateRoot {
     private constructor(
@@ -22,15 +22,11 @@ export class AuthUser extends AggregateRoot {
         super()
     }
 
-    static create(identifier: string, password: string): AuthUser {
-        return new AuthUser(
-            Uuid.random(),
-            Identifier.from(identifier),
-            Password.fromPlain(password),
-        )
+    static create(identifier: Identifier, password: Password): AuthUser {
+        return new AuthUser(Uuid.random(), identifier, password)
     }
 
-    static fromPrimitives(primitives: InternalAuthUserPrimitives): AuthUser {
+    static fromPrimitives(primitives: AuthUserPrimitives): AuthUser {
         return new AuthUser(
             new Uuid(primitives.accountUuid),
             Identifier.from(primitives.identifier),
@@ -40,6 +36,15 @@ export class AuthUser extends AggregateRoot {
     }
 
     toPrimitives(): AuthUserPrimitives {
+        return {
+            accountUuid: this.accountUuid.value,
+            identifier: this.identifier.value,
+            password: this.password.value,
+            banned: this.banned,
+        }
+    }
+
+    secureCredentials(): AuthUserCredentials {
         return {
             accountUuid: this.accountUuid.value,
             identifier: this.identifier.value,

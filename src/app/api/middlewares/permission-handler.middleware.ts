@@ -2,7 +2,7 @@ import type express from 'express'
 import type { JwtGenerator } from '@/contexts/auth/domain/ports/jwt-generator'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/symbols'
 import { ApiContainer } from '@/app/api/container'
-import type { AuthUserPrimitives } from '@/contexts/auth/domain/entities/auth-user'
+import type { AuthUserCredentials } from '@/contexts/auth/domain/entities/auth-user'
 
 const COOKIE_NAME = process.env.SESSION_COOKIE_NAME || '__AgoraDig_Session'
 const PROTECTED_PREFIXES: string[] = ['/example-of-protected-endpoint']
@@ -48,7 +48,7 @@ async function getUser(signedCookies: Record<string, string> | undefined) {
 
     try {
         const jwt = (await ApiContainer.container()).get<JwtGenerator>(AUTH_CONTAINER.JwtGenerator)
-        const { accountUuid, identifier, banned } = await jwt.decode<AuthUserPrimitives>(session)
+        const { accountUuid, identifier, banned } = await jwt.decode<AuthUserCredentials>(session)
 
         return { accountUuid, banned, identifier }
     } catch {

@@ -1,692 +1,317 @@
-openapi: 3.0.3
-
+openapi: 3.0.0
 info:
   title: AgoraDig API
   version: 1.0.0
   description: |
-    # AgoraDig API Documentation
-    
-    ## Overview
-    
-    AgoraDig Refactor represents a comprehensive modernization effort, transforming a monolithic JavaScript application into a robust, modular system built on industry-standard architectural patterns.
+      > **Comprehensive REST API reference for AgoraDig backend services**
 
-  license:
-    name: MIT License
-    url: https://opensource.org/licenses/MIT
+      **Base URL:** `http://localhost/api`  
+      **Version:** `1.0.0`  
+      **Content-Type:** `application/json`
+    
+      ---
+
+      ## Overview
+
+      The AgoraDig API follows **RESTful principles** and uses **JSON** for both request and response payloads.  
+      Each endpoint returns a **standardized response envelope** containing `code`, `message`, and optional `data`.
+
+      Designed for consistency, predictability, and security:
+      - Input validation with [Zod](https://zod.dev/)
+      - Consistent domain & application error mapping
+      - Idempotent, non-enumerative registration flow
+      - JWT-based session authentication with secure httpOnly cookies
 
 servers:
-  - url: http://localhost:3000/api/
-    description: Local development server
-
+  - url: https://localhost/api
+    description: Developing
 tags:
-  - name: Authentication
-    description: |
-      User authentication, session management, and credential verification.
-      
-      **Features:**
-      - Login with email or username
-      - Secure password hashing (bcrypt)
-      - Session-based authentication
-      - Generic error messages to prevent enumeration
-    x-displayName: Authentication
-
-  - name: Users
-    description: User profile management and account operations
-    x-displayName: User Management
-
-  - name: Threads
-    description: Discussion thread creation and management
-    x-displayName: Discussion Threads
-
-  - name: Comments
-    description: Comment posting and interaction
-    x-displayName: Comments
-
-x-tagGroups:
-  - name: Core Features
-    tags:
-      - Authentication
-      - Users
-  - name: Discussion
-    tags:
-      - Threads
-      - Comments
+  - name: Auth
+    description: Authentication & Registration
 
 paths:
   /auth/login:
     post:
-      tags:
-        - Authentication
-      summary: Authenticate user
+      tags: [Auth]
+      summary: Login
+      operationId: post-auth-login
       description: |
-        Authenticates a user using their identifier (email or username) and password. Creates a session on successful authentication.
-        
-        ## Supported Identifiers
-        
-        The `identifier` field accepts two types:
-        
-        - **Email Address** — Validated by the Email Value Object (RFC 5322 compliant)
-        - **Username** — Validated by the Username Value Object (alphanumeric, 3-20 characters)
-        
-        The system automatically detects the identifier type and applies appropriate validation rules.
-        
-        ## Security Features
-        
-        - **Secure Password Hashing** — Bcrypt with cost factor 10
-        - **Enumeration Prevention** — Generic error messages
-        - **Rate Limiting** — 5 attempts per 15 minutes (planned)
-        - **Audit Logging** — All login attempts logged (planned)
-        
-        ## Rate Limiting
-        
-        **Status:** 🟡 Planned
-        
-        - **Limit:** 5 requests per 15 minutes per IP
-        - **Headers:** `X-RateLimit-*` returned in response
-        - **429 Response:** Returned when limit exceeded
-        
-
-      operationId: authenticateUser
-
-      x-codeSamples:
-        - lang: cURL
-          source: |
-            curl -X POST http://localhost:3000/api/v1/auth/login \
-              -H "Content-Type: application/json" \
-              -d '{
-                "identifier": "john.doe@example.com",
-                "password": "Str0ngP@ssw0rd!"
-              }'
-
-        - lang: JavaScript
-          source: |
-            const response = await fetch('http://localhost:3000/api/v1/auth/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                identifier: 'john.doe@example.com',
-                password: 'Str0ngP@ssw0rd!'
-              }),
-              credentials: 'include'
-            });
-            
-            const data = await response.json();
-
-        - lang: Python
-          source: |
-            import requests
-            
-            response = requests.post(
-              'http://localhost:3000/api/v1/auth/login',
-              json={
-                'identifier': 'john.doe@example.com',
-                'password': 'Str0ngP@ssw0rd!'
-              }
-            )
-            
-            data = response.json()
-
+        Validates credentials and issues an **access token** (also set as an httpOnly cookie).
+        Returns minimal, non-sensitive user credentials.
       requestBody:
         required: true
-        description: User credentials for authentication
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
             examples:
-              emailLogin:
-                summary: Login with Email
-                description: Authenticate using a valid email address
+              Example:
                 value:
-                  identifier: john.doe@example.com
-                  password: Str0ngP@ssw0rd!
-
-              usernameLogin:
-                summary: Login with Username
-                description: Authenticate using a username
-                value:
-                  identifier: johndoe
-                  password: Str0ngP@ssw0rd!
-
-              minimalPassword:
-                summary: Minimum Password Requirements
-                description: Password meeting minimum security requirements (8 characters)
-                value:
-                  identifier: user@domain.com
-                  password: Pass123!
-
-              complexPassword:
-                summary: Strong Password Example
-                description: Password with high complexity
-                value:
-                  identifier: secure.user@example.com
-                  password: C0mpl3x!P@ssw0rd#2024
-
+                  identifier: "john.doe@example.com"
+                  password: "Password123!"
       responses:
-        '200':
-          description: |
-            **Authentication Successful**
-            
-            User credentials validated successfully. A session has been created and the session cookie is set in the response headers.
-        
-
+        "200":
+          description: Login successful
           headers:
             Set-Cookie:
-              description: Session cookie for authenticated requests
+              description: httpOnly session cookie with the access token (e.g., `session=...; HttpOnly; Secure; SameSite=Lax`)
               schema:
                 type: string
-                example: token=abc123xyz; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400
-
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginSuccessResponse'
+                $ref: "#/components/schemas/LoginSuccessEnvelope"
               examples:
-                emailSuccess:
-                  summary: Email Login Success
-                  description: Successful authentication using email address
+                Success:
                   value:
-                    code: SUCCESS
+                    code: USER_LOGGED_IN
                     message: Login successful
-
-                usernameSuccess:
-                  summary: Username Login Success
-                  description: Successful authentication using username
-                  value:
-                    code: SUCCESS
-                    message: Login successful
-
-        '400':
-          description: |
-            **Bad Request — Schema Validation Error**
-            
-            **Layer:** Schema Validation (Zod)
-            
-            The request body failed validation before reaching application logic. This indicates a malformed request that doesn't match the expected schema.
-            
-            ### Common Causes
-            
-            - Missing required fields (`identifier` or `password`)
-            - Invalid data types (e.g., number instead of string)
-            - Malformed JSON body
-            - Empty strings where values are required
-            - Field length constraints violated
-
+                    data:
+                      id: "7b1c7ec2-0c1a-4d2a-8ad0-9c7a3a4d7b9d"
+                      identifier: "john.doe@example.com"
+                      roles: ["user"]
+                      banned: false
+                      verified: true
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          description: Invalid credentials
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ValidationErrorResponse'
+                $ref: "#/components/schemas/ErrorEnvelope"
               examples:
-                missingIdentifier:
-                  summary: Missing Required Field
-                  description: The identifier field is missing from the request
-                  value:
-                    code: VALIDATION_ERROR
-                    message: "The password is invalid input."
-
-                invalidType:
-                  summary: Invalid Data Type
-                  description: Field has incorrect data type
-                  value:
-                    code: VALIDATION_ERROR
-                    message:
-                      - code: invalid_type
-                        path: ['identifier']
-                        message: Expected string, received number
-                        expected: string
-                        received: number
-                    timestamp: '2025-10-08T14:30:00Z'
-                    path: /auth/login
-        '401':
-          description: |
-            **Unauthorized — Invalid Credentials**
-            
-            **Layer:** Application
-            
-            Authentication failed because the provided credentials do not match any valid user account.
-            
-            ### Common Causes
-            
-            - Incorrect password for existing user
-            - Non-existent user account
-            - Typo in email or username
-            - Case-sensitive password mismatch
-            
-            ### Security Note
-            
-            The response is intentionally generic to prevent **user enumeration attacks**. The system does not reveal whether the identifier exists or if only the password is incorrect.
-
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                invalidCredentials:
-                  summary: Authentication Failed
-                  description: Generic authentication failure response
+                InvalidCredentials:
                   value:
                     code: INVALID_CREDENTIALS
-                    message: Invalid credentials
-
-        '409':
-          description: |
-            **Conflict — Application Policy Violation**
-            
-            **Layer:** Application
-            
-            The request conflicts with the current state of the application or violates a business rule. Credentials may be correct, but the account cannot authenticate due to policy restrictions.
-            
-            ### Common Scenarios
-            
-            - User account has been banned or suspended
-            - Account locked due to multiple failed login attempts
-            -️ Account pending email verification
-            -  User in a state that prevents authentication
-            - Account under maintenance or review
-
+                    message: "Invalid identifier or password"
+        "403":
+          description: User banned
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorEnvelope"
               examples:
-                userBanned:
-                  summary: Banned User Account
-                  description: Account has been permanently or temporarily banned
+                Banned:
                   value:
                     code: USER_BANNED
-                    message: User has been banned
-
-        '422':
-          description: |
-            **Unprocessable Entity — Domain Validation Error**
-            
-            **Layer:** Domain
-            
-            The request data violates domain-level validation rules enforced by Value Objects. This indicates that while the data passed schema validation, it fails business logic constraints.
-            
-            ### Common Scenarios
-            
-            - Invalid email format (fails Email Value Object validation)
-            - Invalid username format or length constraints
-            - Password does not meet complexity requirements
-            - Domain-specific business rules violated
-            
-            ### Domain Validation Rules
-            
-            **Email:**
-            - Must be valid RFC 5322 format
-            - TLD must be at least 2 characters
-            - Cannot contain special characters in local part
-            
-            **Username:**
-            - Alphanumeric characters only
-            - Length: 3-20 characters
-            - No special characters allowed
-            
-            **Password:**
-            - Minimum 8 characters
-            - Must contain uppercase, lowercase, number, special char
-
+                    message: "User is banned"
+        "429":
+          description: Too many login attempts
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorEnvelope"
               examples:
-                invalidEmailTLD:
-                  summary: Invalid Email TLD
-                  description: Top-level domain does not meet requirements
+                Throttled:
                   value:
-                    code: EMAIL_TLD_INVALID
-                    message: Top-level domain must be at least 2 letters
+                    code: RATE_LIMIT_EXCEEDED
+                    message: "Too many attempts. Please try again later."
+        "500":
+          $ref: "#/components/responses/InternalError"
+      security: []  # public endpoint (no auth required)
 
-                invalidEmailFormat:
-                  summary: Malformed Email Address
-                  description: Email address format is invalid
-                  value:
-                    code: EMAIL_FORMAT_INVALID
-                    message: Invalid email format
-
-                passwordTooShort:
-                  summary: Password Length Error
-                  description: Password does not meet minimum length requirement
-                  value:
-                    code: PASSWORD_TOO_SHORT
-                    message: Password must be at least 8 characters long
-
-                usernameInvalid:
-                  summary: Invalid Username Format
-                  description: Username contains invalid characters
-                  value:
-                    code: USERNAME_INVALID
-                    message: Username must contain only alphanumeric characters
-
-                passwordComplexity:
-                  summary: Weak Password
-                  description: Password does not meet complexity requirements
-                  value:
-                    code: PASSWORD_TOO_WEAK
-                    message: Password must contain uppercase, lowercase, number, and special character
-
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-        '500':
-          description: |
-            **Internal Server Error**
-            
-            **Layer:** Infrastructure
-            
-            An unexpected error occurred on the server. This is a catch-all for unhandled exceptions that escaped the normal error handling flow.
-            
-            ### Common Causes
-            
-            - Database connection failure
-            -  External service timeout
-            - Unhandled exception in business logic
-            - Infrastructure or configuration issues
-            - Out of memory or disk space
-            
-            **Note:** These errors should not occur in normal operation and are treated as high-priority incidents.
-
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register
+      operationId: post-auth-register
+      description: |
+        Starts the registration flow.  
+        Always returns a neutral response instructing the client to **check email**.  
+        Backend may send activation for new users or magic link for existing ones.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+            examples:
+              Example:
+                value:
+                  identifier: "john.doe@example.com"
+                  password: "Password123!"
+      responses:
+        "201":
+          description: Registration accepted
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/RegistrationSuccessEnvelope"
               examples:
-                genericError:
-                  summary: Generic Server Error
-                  description: Unspecified internal error
+                Accepted:
                   value:
-                    code: INTERNAL_SERVER_ERROR
-                    message: An unexpected error occurred. Please try again later.
-      security: []
+                    code: USER_REGISTERED
+                    message: "User registered successfully"
+                    data:
+                      nextAction: "check_email"
+                      flowId: "reg_5e1f6b13-3a60-4f0a-9e2e-4b93f0b9b5a1"
+                      expiresAt: 1730000000000
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "409":
+          description: Conflict (only for strict conflict mode; typically unused in non-enumerative flows)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+              examples:
+                AlreadyExists:
+                  value:
+                    code: ALREADY_EXISTS
+                    message: "Identifier already registered"
+        "429":
+          description: Too many registration attempts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+              examples:
+                Throttled:
+                  value:
+                    code: RATE_LIMIT_EXCEEDED
+                    message: "Too many attempts. Please try again later."
+        "500":
+          $ref: "#/components/responses/InternalError"
+      security: []  # public endpoint (no auth required)
 
 components:
+  securitySchemes:
+    SessionCookie:
+      type: apiKey
+      in: cookie
+      name: session
+      description: httpOnly session cookie set on successful login
+
   schemas:
+    # ----- Requests -----
     LoginRequest:
       type: object
-      required:
-        - identifier
-        - password
+      required: [identifier, password]
       properties:
         identifier:
           type: string
           minLength: 1
-          maxLength: 255
-          description: |
-            User identifier, which can be either:
-            
-            ### Accepted Formats
-            
-            **Email Address:**
-            - Must be valid RFC 5322 format
-            - Example: `john.doe@example.com`
-            - Validated by Email Value Object
-            - TLD must be at least 2 characters
-            
-            **Username:**
-            - Alphanumeric characters only
-            - Length: 3-20 characters
-            - Example: `johndoe`
-            - Validated by Username Value Object
-            - No special characters or spaces
-            
-            The system automatically detects the type and applies appropriate validation rules.
-          example: john.doe@example.com
-
+          description: Email or username
         password:
           type: string
-          format: password
-          minLength: 8
-          maxLength: 128
-          description: |
-            User's plaintext password. This will be verified against the stored hash.
-            
-            ### Security Notes
-            
-            - 🔒 **Transmission:** HTTPS only (never HTTP)
-            - 💾 **Storage:** Never stored in plaintext
-            - 🔐 **Hashing:** Bcrypt with cost factor 10
-            - 🛡️ **Complexity:** Must meet domain requirements
-            
-            ### Minimum Requirements
-            
-            - At least 8 characters
-            - Contains uppercase letter
-            - Contains lowercase letter
-            - Contains number
-            - Contains special character
-            
-            **Note:** Password is case-sensitive.
-          example: Str0ngP@ssw0rd!
-      example:
-        identifier: john.doe@example.com
-        password: Str0ngP@ssw0rd!
-
-    LoginSuccessResponse:
+          minLength: 1
+          description: Plain password (validated server-side)
+    RegisterRequest:
       type: object
-      required:
-        - code
-        - message
+      required: [identifier, password]
+      properties:
+        identifier:
+          type: string
+          minLength: 1
+          description: Email or username to register
+        password:
+          type: string
+          minLength: 1
+          description: Plain password (validated server-side)
+
+    # ----- Domain-ish DTOs (minimal, non-sensitive) -----
+    AuthUserCredentials:
+      type: object
+      description: Minimal, non-sensitive user representation
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User ID
+        identifier:
+          type: string
+          description: Email/username
+        roles:
+          type: array
+          items:
+            type: string
+          description: Assigned roles
+        banned:
+          type: boolean
+          description: Whether the user is banned
+        verified:
+          type: boolean
+          description: Whether the user has verified their email/identifier
+      required: [id, identifier, banned, verified]
+
+    RegistrationResult:
+      type: object
+      description: Neutral result for registration flows
+      properties:
+        nextAction:
+          type: string
+          enum: [check_email]
+          description: Next client step
+        flowId:
+          type: string
+          description: Opaque registration flow identifier (not the user ID)
+        expiresAt:
+          type: integer
+          format: int64
+          description: Expiration time as Unix epoch milliseconds
+      required: [nextAction, flowId, expiresAt]
+
+    # ----- Envelopes -----
+    LoginSuccessEnvelope:
+      type: object
       properties:
         code:
           type: string
-          enum:
-            - SUCCESS
-          description: Success status code indicating authentication succeeded
-          example: SUCCESS
-
+          enum: [USER_LOGGED_IN]
         message:
           type: string
-          description: Human-readable success message
-          example: Login successful
+        data:
+          $ref: "#/components/schemas/AuthUserCredentials"
+      required: [code, message, data]
 
-      example:
-        code: SUCCESS
-        message: Login successful
-
-    ErrorResponse:
+    RegistrationSuccessEnvelope:
       type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          oneOf:
-            - type: string
-              description: Application or domain error code
-            - type: integer
-              description: HTTP status code for infrastructure errors
-          description: |
-            Stable error code for programmatic error handling.
-            
-            ### Error Code Types
-            
-            **String Codes** (Application & Domain Errors):
-            - `INVALID_CREDENTIALS` — Authentication failed
-            - `USER_BANNED` — Account restricted
-            - `EMAIL_TLD_INVALID` — Domain validation failed
-            - `PASSWORD_TOO_SHORT` — Password constraint violated
-            
-            **Integer Codes** (Infrastructure Errors):
-            - `500` — Internal server error
-            - `503` — Service unavailable
-            
-            ### Usage
-            
-            Use these codes in your application for:
-            - Error handling logic
-            - User-friendly error messages
-            - Retry strategies
-            - Logging and monitoring
-            
-            **Important:** Do not parse error messages for logic. Always use error codes.
-          example: INVALID_CREDENTIALS
-        message:
-          type: string
-          description: |
-            Human-readable error message providing details about what went wrong.
-          example: Invalid credentials
-      example:
-        code: INVALID_CREDENTIALS
-        message: Invalid credentials
-
-    ValidationErrorResponse:
-      type: object
-      required:
-        - code
-        - message
       properties:
         code:
           type: string
-          enum:
-            - VALIDATION_ERROR
-          description: Fixed error code indicating schema validation failure
-          example: VALIDATION_ERROR
-
+          enum: [USER_REGISTERED]
         message:
           type: string
-          description: |
-            This detailed information helps clients understand exactly what needs to be corrected.
-          example: The password is invalid input.
+        data:
+          $ref: "#/components/schemas/RegistrationResult"
+      required: [code, message, data]
 
-      example:
-        code: VALIDATION_ERROR
-        message: The password is invalid input.
+    ErrorEnvelope:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Application/Domain error code
+        message:
+          type: string
+        details:
+          description: Optional structured details (e.g., validation issues)
+      required: [code, message]
 
   responses:
-    UnauthorizedError:
-      description: |
-        **Authentication Required**
-        
-        The request requires authentication but none was provided, or the provided authentication is invalid.
-
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            noAuth:
-              summary: No Authentication Provided
-              value:
-                code: UNAUTHORIZED
-                message: Authentication required
-
-            invalidToken:
-              summary: Invalid Token
-              value:
-                code: INVALID_TOKEN
-                message: The provided authentication token is invalid
-
-            expiredToken:
-              summary: Expired Token
-              value:
-                code: TOKEN_EXPIRED
-                message: Authentication token has expired
-
-    ForbiddenError:
-      description: |
-        **Insufficient Permissions**
-        
-        The authenticated user does not have permission to access this resource or perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            insufficientPermissions:
-              summary: Insufficient Permissions
-              value:
-                code: FORBIDDEN
-                message: You do not have permission to access this resource
-
-            resourceOwnership:
-              summary: Resource Ownership Required
-              value:
-                code: NOT_RESOURCE_OWNER
-                message: You can only modify your own resources
-
-    NotFoundError:
-      description: |
-        **Resource Not Found**
-        
-        The requested resource does not exist or has been deleted.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            resourceNotFound:
-              summary: Resource Not Found
-              value:
-                code: NOT_FOUND
-                message: The requested resource was not found
-
-            endpointNotFound:
-              summary: Endpoint Not Found
-              value:
-                code: ENDPOINT_NOT_FOUND
-                message: The requested endpoint does not exist
-
-    RateLimitError:
-      description: |
-        **Rate Limit Exceeded**
-        
-        Too many requests have been sent in a given time period. Please wait before retrying.
-
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            rateLimitExceeded:
-              summary: Rate Limit Exceeded
-              value:
-                code: RATE_LIMIT_EXCEEDED
-                message: Too many requests. Please try again in 15 minutes.
-
-            ipBanned:
-              summary: IP Temporarily Banned
-              value:
-                code: IP_BANNED
-                message: Your IP has been temporarily banned due to suspicious activity
-
-    ConflictError:
-      description: |
-        **Conflict**
-        
-        The request conflicts with the current state of the resource.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          examples:
-            duplicateResource:
-              summary: Duplicate Resource
-              value:
-                code: RESOURCE_ALREADY_EXISTS
-                message: A resource with this identifier already exists
-
     ValidationError:
-      description: |
-        **Validation Error**
-        
-        The request body failed schema validation.
+      description: Validation error (Zod)
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ValidationErrorResponse'
-
-
-  examples:
-    SuccessfulLogin:
-      summary: Successful Login Response
-      value:
-        code: SUCCESS
-        message: Login successful
-
-    InvalidCredentials:
-      summary: Invalid Credentials Error
-      value:
-        code: INVALID_CREDENTIALS
-        message: Invalid credentials
+            $ref: "#/components/schemas/ErrorEnvelope"
+          examples:
+            ValidationError:
+              value:
+                code: VALIDATION_ERROR
+                message:
+                  fieldErrors:
+                    identifier: ["Identifier is required"]
+                    password: ["Password is required"]
+    InternalError:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+          examples:
+            Internal:
+              value:
+                code: INTERNAL_ERROR
+                message: "An unexpected error occurred"

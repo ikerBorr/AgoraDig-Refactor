@@ -4,6 +4,7 @@ import { Uuid } from '@/contexts/shared-kernel/domain/value-objects/uuid'
 import { Password } from '@/contexts/auth/domain/value-objects/password'
 import type { Identifier } from '@/contexts/auth/domain/value-objects/identifier'
 import type { Nullable } from '@/contexts/shared-kernel/application/types/nullable'
+import { EntityNotFoundException } from '@/contexts/shared-kernel/infrastructure/exceptions/entity-not-found.exception'
 
 export class InMemoryAuthUserRepository implements AuthUserRepository {
     private readonly users: AuthUser[] = [
@@ -39,5 +40,13 @@ export class InMemoryAuthUserRepository implements AuthUserRepository {
 
     async searchByIdentifier(identifier: Identifier): Promise<Nullable<AuthUser>> {
         return this.users.find((u) => u.identifier.value === identifier.value) ?? null
+    }
+
+    async findByIdentifier(identifier: Identifier): Promise<AuthUser> {
+        const user = await this.searchByIdentifier(identifier)
+        if (!user) {
+            throw new EntityNotFoundException(`User ${identifier} not found`)
+        }
+        return user
     }
 }

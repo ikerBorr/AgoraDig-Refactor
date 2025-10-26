@@ -64,7 +64,7 @@ Pure business logic with zero external dependencies:
 
 #### Application Layer
 Orchestrates use cases and defines contracts:
-- **Use Cases** — Business workflows (`LoginCase`)
+- **Use Cases** — Business workflows (`LoginAuthUserCase`)
 - **Ports** — Interface definitions for infrastructure
 - **DTOs** — Data transfer objects for inter-layer communication
 - **Application Exceptions** — Use case specific errors

@@ -1,6 +1,6 @@
 import type express from 'express'
 import { loginSchema } from '@/app/api/routes/auth/login/login.schema'
-import type { LoginCase } from '@/contexts/auth/application/use-cases/login.case'
+import type { LoginAuthUserCase } from '@/contexts/auth/application/use-cases/login-auth-user.case'
 import { AUTH_CONTAINER } from '@/contexts/auth/infrastructure/di/symbols'
 import { zodErrorFormatter } from '@/app/api/serialization/zod-error-formatter'
 import { createSessionCookie } from '@/app/api/serialization/express-cookies'
@@ -16,11 +16,13 @@ export async function POST(req: express.Request, res: express.Response) {
     }
 
     const loginCommand: LoginCommand = parsed.data
-    const useCase = (await ApiContainer.container()).get<LoginCase>(AUTH_CONTAINER.LoginCase)
+    const useCase = (await ApiContainer.container()).get<LoginAuthUserCase>(
+        AUTH_CONTAINER.LoginCase,
+    )
 
-    const { session, user } = await useCase.execute(loginCommand)
+    const { accessToken, user } = await useCase.execute(loginCommand)
 
-    createSessionCookie(res, session)
+    createSessionCookie(res, accessToken)
 
     return res.status(200).json({
         code: 'USER_LOGGED_IN',

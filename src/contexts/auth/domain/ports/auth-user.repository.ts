@@ -5,4 +5,5 @@ import type { Nullable } from '@/contexts/shared-kernel/application/types/nullab
 export interface AuthUserRepository {
     save(user: AuthUser): Promise<void>
     searchByIdentifier(identifier: Identifier): Promise<Nullable<AuthUser>>
+    findByIdentifier(identifier: Identifier): Promise<AuthUser>
 }
