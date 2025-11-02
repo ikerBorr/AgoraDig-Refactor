@@ -16,7 +16,7 @@ export async function permissionHandlerMiddleware(
     exportUser(res, user)
 
     if (req.path === '/' && process.env.NODE_ENV === 'development') {
-        return res.redirect('/api/docs')
+        return res.redirect('/api/welcome')
     }
 
     if (isProtectedEndpoint(req.path) && !user) {
