@@ -1,7 +1,7 @@
 import { createClient, type RedisClientType } from 'redis'
 
 export class RedisClient {
-    private static redisUrl = process.env.REDIS_URL!
+    private static readonly redisUrl = process.env.REDIS_URL!
     private static instance: RedisClientType | null = null
 
     private constructor() {}
