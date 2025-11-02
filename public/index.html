@@ -336,7 +336,7 @@
         const revealTargets = Array.from(document.querySelectorAll('[data-animate]'));
 
         const io = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
+            for (const entry of entries) {
                 if (entry.isIntersecting) {
                     const el = entry.target;
                     el.classList.add('is-inview');
@@ -348,12 +348,16 @@
                     }
                     io.unobserve(el);
                 }
-            });
+            }
         }, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
 
-        revealTargets.forEach((el) => io.observe(el));
+        for (const el of revealTargets) {
+            io.observe(el)
+        }
     } else {
-        document.querySelectorAll('[data-animate]').forEach((el) => el.classList.add('is-inview'));
+        for (const el of document.querySelectorAll('[data-animate]')) {
+            el.classList.add('is-inview')
+        }
     }
 
     (function heroParallax() {
@@ -365,7 +369,7 @@
         function onScroll() {
             if (ticking) return; ticking = true;
             requestAnimationFrame(() => {
-                const scrollY = window.scrollY;
+                const scrollY = globalThis.scrollY;
                 const delta = Math.max(0, Math.min(1, scrollY / 600));
                 const translate = delta * 8;
                 title.style.transform = `translateY(${translate}px)`;
@@ -374,7 +378,7 @@
             });
         }
 
-        window.addEventListener('scroll', onScroll, { passive: true });
+        globalThis.addEventListener('scroll', onScroll, { passive: true });
     })();
 </script>
 </body>
