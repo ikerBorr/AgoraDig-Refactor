@@ -330,9 +330,9 @@
 </div>
 
 <script>
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReduced = globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    if (!prefersReduced && 'IntersectionObserver' in window) {
+    if (!prefersReduced && 'IntersectionObserver' in globalThis) {
         const revealTargets = Array.from(document.querySelectorAll('[data-animate]'));
 
         const io = new IntersectionObserver((entries) => {
@@ -367,7 +367,10 @@
         let ticking = false;
 
         function onScroll() {
-            if (ticking) return; ticking = true;
+            if (ticking) {
+                return
+            }
+            ticking = true;
             requestAnimationFrame(() => {
                 const scrollY = globalThis.scrollY;
                 const delta = Math.max(0, Math.min(1, scrollY / 600));
